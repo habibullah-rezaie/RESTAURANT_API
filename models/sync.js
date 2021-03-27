@@ -6,6 +6,7 @@ const File = require("./file");
  */
 module.exports = async (server) => {
   try {
+    await database.sync({ force: true });
     console.log("Success Synchronizing database.");
   } catch (error) {
     console.error(error);
