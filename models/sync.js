@@ -1,4 +1,5 @@
-const database = require("./db");
+const Admin = require("./admin");
+const database = require("./sequelize");
 const File = require("./file");
 
 /**
