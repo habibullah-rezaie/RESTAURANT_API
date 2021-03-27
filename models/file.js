@@ -16,14 +16,6 @@ File.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    originalName: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    mimeType: {
-      type: DataTypes.STRING(),
-      allowNull: false,
-    },
   },
   { sequelize: sequelize }
 );
