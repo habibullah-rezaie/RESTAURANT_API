@@ -1,4 +1,5 @@
 const database = require("./db");
+const File = require("./file");
 
 /**
  * server: An http server
