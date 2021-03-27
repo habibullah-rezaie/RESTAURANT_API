@@ -19,9 +19,13 @@ Customer.belongsTo(Address);
 // Every Address has a zip code
 Address.belongsTo(ZipCode, { as: "zip" });
 
-// TODO: Connect Order to customer
-// TODO: Connect Customer to Address
-// TODO: Connect Address to ZipCode
+// Product has many files
+Product.belongsToMany(File, { through: ProductFile });
+File.belongsToMany(Product, { through: ProductFile });
+
+// Product belongs to several orders
+Product.belongsToMany(Order, { through: OrderItem });
+Order.belongsToMany(Product, { through: OrderItem });
 
 /**
  * server: An http server
