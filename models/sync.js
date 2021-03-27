@@ -1,6 +1,7 @@
 const Admin = require("./admin");
 const database = require("./sequelize");
 const File = require("./file");
+const Timing = require("./timing");
 
 /**
  * server: An http server
