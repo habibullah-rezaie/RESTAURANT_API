@@ -7,6 +7,17 @@ const Order = require("./order");
 const Customer = require("./customer");
 const ZipCode = require("./zipCode");
 const Address = require("./address");
+const ProductFile = require("./productFile");
+const OrderItem = require("./OrderItem");
+
+// Every Order belongs to a customer
+Order.belongsTo(Customer, { as: "customer" });
+
+// Every Customer has an address
+Customer.belongsTo(Address);
+
+// Every Address has a zip code
+Address.belongsTo(ZipCode, { as: "zip" });
 
 // TODO: Connect Order to customer
 // TODO: Connect Customer to Address
