@@ -5,6 +5,7 @@ const Timing = require("./timing");
 const Product = require("./product");
 const Order = require("./order");
 const Customer = require("./customer");
+const ZipCode = require("./zipCode");
 
 // TODO: Connect Order to customer
 // TODO: Connect Customer to Address
