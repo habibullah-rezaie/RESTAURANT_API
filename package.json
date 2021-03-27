@@ -1,0 +1,11 @@
+{
+  "name": "restaurant_api",
+  "version": "1.0.0",
+  "description": "This is the api of the restaurant project of samir`s brother",
+  "main": "restaurant_api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Habibullah Rezaie, Nooruddin Rahmani",
+  "license": "ISC"
+}
