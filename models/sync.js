@@ -10,6 +10,7 @@ const Address = require("./address");
 const ProductFile = require("./productFile");
 const OrderItem = require("./OrderItem");
 const Additive = require("./additive");
+const Allergen = require("./allergen");
 
 // Every Order belongs to a customer
 Order.belongsTo(Customer, { as: "customer" });
@@ -29,6 +30,7 @@ Product.belongsToMany(Order, { through: OrderItem });
 Order.belongsToMany(Product, { through: OrderItem });
 
 Additive.belongsTo(Product);
+Allergen.belongsTo(Product);
 /**
  * server: An http server
  */
