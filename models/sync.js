@@ -4,10 +4,10 @@ const File = require("./file");
 const Timing = require("./timing");
 const Product = require("./product");
 const Order = require("./order");
+const Customer = require("./customer");
 
 // TODO: Connect Order to customer
-
-
+// TODO: Connect Customer to Address
 
 /**
  * server: An http server
