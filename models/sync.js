@@ -3,6 +3,11 @@ const database = require("./sequelize");
 const File = require("./file");
 const Timing = require("./timing");
 const Product = require("./product");
+const Order = require("./order");
+
+// TODO: Connect Order to customer
+
+
 
 /**
  * server: An http server
