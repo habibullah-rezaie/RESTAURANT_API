@@ -6,9 +6,11 @@ const Product = require("./product");
 const Order = require("./order");
 const Customer = require("./customer");
 const ZipCode = require("./zipCode");
+const Address = require("./address");
 
 // TODO: Connect Order to customer
 // TODO: Connect Customer to Address
+// TODO: Connect Address to ZipCode
 
 /**
  * server: An http server
