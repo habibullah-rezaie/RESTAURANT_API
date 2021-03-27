@@ -9,6 +9,7 @@ const ZipCode = require("./zipCode");
 const Address = require("./address");
 const ProductFile = require("./productFile");
 const OrderItem = require("./OrderItem");
+const Additive = require("./additive");
 
 // Every Order belongs to a customer
 Order.belongsTo(Customer, { as: "customer" });
@@ -27,6 +28,7 @@ File.belongsToMany(Product, { through: ProductFile });
 Product.belongsToMany(Order, { through: OrderItem });
 Order.belongsToMany(Product, { through: OrderItem });
 
+Additive.belongsTo(Product);
 /**
  * server: An http server
  */
