@@ -12,7 +12,7 @@ Topping.init(
       allowNull: false,
     },
     title: {
-      type: STRING(64),
+      type: STRING(100),
       allowNull: false,
     },
     price: {
