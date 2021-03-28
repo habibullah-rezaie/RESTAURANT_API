@@ -19,7 +19,7 @@ ProductCategory.init(
       type: TEXT({ length: "tiny" }),
     },
   },
-  { sequelize }
+  { sequelize, timestamps: false }
 );
 
 module.exports = ProductCategory;
