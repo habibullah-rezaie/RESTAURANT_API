@@ -14,9 +14,10 @@ const Allergen = require("./allergen");
 const Topping = require("./topping");
 const OrderItemTopping = require("./orderItemTopping");
 const ProductTopping = require("./productTopping");
+const ProductCategory = require("./productCategory");
 
 // Every Order belongs to a customer
-Order.belongsTo(Customer, { as: "customer" });
+Order.belongsTo(Customer);
 
 // Every Customer has an address
 Customer.belongsTo(Address);
@@ -31,6 +32,9 @@ File.belongsToMany(Product, { through: ProductFile });
 // Product belongs to several orders
 Product.belongsToMany(Order, { through: OrderItem });
 Order.belongsToMany(Product, { through: OrderItem });
+
+// Every product belongs to a special product
+Product.belongsTo(ProductCategory);
 
 Additive.belongsTo(Product);
 Allergen.belongsTo(Product);
