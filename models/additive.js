@@ -16,7 +16,7 @@ Additive.init(
       allowNull: false,
     },
   },
-  { sequelize }
+  { sequelize, timestamps: false }
 );
 
 module.exports = Additive;
