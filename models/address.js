@@ -1,4 +1,4 @@
-const { Model, UUID, UUIDV4, STRING } = require("sequelize");
+const { Model, UUID, UUIDV4, TEXT } = require("sequelize");
 const sequelize = require("./sequelize");
 
 class Address extends Model {}
@@ -12,7 +12,7 @@ Address.init(
       allowNull: false,
     },
     detail: {
-      type: STRING(500),
+      type: TEXT({ length: "medium" }),
       allowNull: false, // Detail is contained of Street, and home number so it is necessary
     },
   },
