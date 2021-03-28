@@ -23,7 +23,7 @@ Order.belongsTo(Customer);
 Customer.belongsTo(Address);
 
 // Every Address has a zip code
-Address.belongsTo(ZipCode, { as: "zip" });
+Address.belongsTo(ZipCode, { as: "Zip" });
 
 // Product has many files
 Product.belongsToMany(File, { through: ProductFile });
