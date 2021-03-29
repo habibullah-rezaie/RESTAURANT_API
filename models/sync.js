@@ -48,8 +48,8 @@ OrderItem.belongsToMany(Topping, { through: OrderItemTopping });
  */
 module.exports = async (server) => {
   try {
-    await database.sync({ force: true });
-    console.log("Success Synchronizing database.");
+    await database.sync({ force: false });
+    server.listen(8888, () => console.log("Server started on post 8888"));
   } catch (error) {
     console.error(error);
   }
