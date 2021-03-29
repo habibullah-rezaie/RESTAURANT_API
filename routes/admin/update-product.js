@@ -4,6 +4,7 @@ const {
   updateProductAllergen,
   updateProductAdditive,
   updateProductToppings,
+  updateProductCategory,
 } = require("../../controllers/admin/update-product");
 const router = express.Router();
 
@@ -18,5 +19,9 @@ router.put("/additives/:id", updateProductAdditive);
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put("/toppings/:id", updateProductToppings);
+
+
+// PUT /admin/products/toppings/id -> change the text of a specifiec toppings
+router.put("/categories/:id", updateProductCategory);
 
 module.exports = router;

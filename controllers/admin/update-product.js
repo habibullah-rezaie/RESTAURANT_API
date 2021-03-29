@@ -122,9 +122,7 @@ exports.updateProductToppings = async (req, res, next) => {
   try {
     if (!(title || price)) {
       // No text provided
-      return res
-        .status(422)
-        .json({ message: "No text or price provided." });
+      return res.status(422).json({ message: "No text or price provided." });
     }
 
     const topping = await Topping.findByPk(toppingId);
@@ -149,6 +147,43 @@ exports.updateProductToppings = async (req, res, next) => {
     // Internal server error
     console.error(err);
     err.statusCode = err.statusCode ? err.statusCode : 500;
+    next(err);
+  }
+};
+
+/**
+ * PUT /admin/products/categories/:id => change a catelgories properties
+ */
+exports.updateProductCategory = async (req, res, next) => {
+  const ctgId = req.params.id;
+
+  const { name, description } = req.body;
+
+  if (!name && !description) {
+    return res.status(422).json({
+      message: "Not title nor description provided",
+    });
+  }
+
+  try {
+    const ctg = await ProductCategory.findByPk(ctgId);
+
+    if (!ctg)
+      return res.status(422).json({
+        message: "Invalid category id",
+      });
+
+    ctg.name = name ? name : ctg.name;
+    ctg.description = description ? description : ctg.description;
+
+    await ctg.save();
+
+    res.status(200).json({
+      category: ctg,
+      message: "Successfully updated category.",
+    });
+  } catch (err) {
+    console.error(err);
     next(err);
   }
 };
