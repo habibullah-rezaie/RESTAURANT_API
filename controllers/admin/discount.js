@@ -1,0 +1,1 @@
+exports.DiscountToAllProducts = async (req, res, next) => {};
