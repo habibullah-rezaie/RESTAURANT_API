@@ -124,7 +124,7 @@ exports.updateProductToppings = async (req, res, next) => {
       // No text provided
       return res
         .status(422)
-        .json({ message: "No text or product id provided." });
+        .json({ message: "No text or price provided." });
     }
 
     const topping = await Topping.findByPk(toppingId);
