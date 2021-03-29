@@ -1,3 +1,4 @@
+const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
@@ -61,6 +62,43 @@ exports.updateProductAllergen = async (req, res, next) => {
       return res
         .status(422)
         .json({ message: "Allergen not found, invalid id" });
+    }
+
+    // No text provided
+    return res.status(422).json({ message: "No text or product id provided." });
+  } catch (err) {
+    // Internal server error
+    console.error(err);
+    err.statusCode = err.statusCode ? err.statusCode : 500;
+    next(err);
+  }
+};
+
+// PUT /admin/products/additives/:id change additives
+exports.updateProductAdditive = async (req, res, next) => {
+  const additiveId = req.params.id;
+
+  const { text, productId } = req.body;
+
+  try {
+    if (text || productId) {
+      const additive = await Additive.findByPk(additiveId);
+      if (additive) {
+        if (text) additive.text = text;
+        if (productId) additive.ProductId = productId;
+        await additive.save();
+
+        // Successful response
+        return res.status(200).json({
+          additive: additive,
+          message: "Successfully changed the additive.",
+        });
+      }
+
+      // Invalid Id no additive found
+      return res
+        .status(422)
+        .json({ message: "Additive not found, invalid id" });
     }
 
     // No text provided
