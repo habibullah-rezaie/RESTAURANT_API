@@ -1,8 +1,10 @@
 const { json } = require("express");
 const express = require("express");
 
+
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
+const addproductRoutes = require("./routes/admin/add-product")
 
 const app = express();
 
@@ -22,5 +24,9 @@ app.use(json());
 
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
+
+
+//used for product addition 
+app.use("/admin/products", addproductRoutes)
 
 sync(app);
