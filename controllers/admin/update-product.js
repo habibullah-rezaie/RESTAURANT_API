@@ -2,6 +2,7 @@ const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
+const Topping = require("../../models/topping");
 
 exports.updateProduct = async (req, res, next) => {
   const productId = req.params.id;
@@ -34,6 +35,7 @@ exports.updateProduct = async (req, res, next) => {
     res.send("hi");
   } catch (err) {
     console.error(err);
+    next(err);
   }
 };
 
@@ -103,6 +105,46 @@ exports.updateProductAdditive = async (req, res, next) => {
 
     // No text provided
     return res.status(422).json({ message: "No text or product id provided." });
+  } catch (err) {
+    // Internal server error
+    console.error(err);
+    err.statusCode = err.statusCode ? err.statusCode : 500;
+    next(err);
+  }
+};
+
+// PUT /admin/products/toppings/:id change toppings
+exports.updateProductToppings = async (req, res, next) => {
+  const toppingId = req.params.id;
+
+  const { title, price } = req.body;
+
+  try {
+    if (!(title || price)) {
+      // No text provided
+      return res
+        .status(422)
+        .json({ message: "No text or product id provided." });
+    }
+
+    const topping = await Topping.findByPk(toppingId);
+
+    // Invalid Id no topping found
+    if (!topping) {
+      return res.status(422).json({ message: "topping not found, invalid id" });
+    }
+
+    if (title) topping.title = title;
+
+    if (price) topping.price = price;
+
+    await topping.save();
+
+    // Successful response
+    return res.status(200).json({
+      topping: topping,
+      message: "Successfully changed the topping.",
+    });
   } catch (err) {
     // Internal server error
     console.error(err);
