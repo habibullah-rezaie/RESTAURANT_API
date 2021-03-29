@@ -1,3 +1,4 @@
+const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 
@@ -32,5 +33,42 @@ exports.updateProduct = async (req, res, next) => {
     res.send("hi");
   } catch (err) {
     console.error(err);
+  }
+};
+
+// PUT /admin/products/allergens/:id change allergen
+exports.updateProductAllergen = async (req, res, next) => {
+  const allergenId = req.params.id;
+
+  const { text, productId } = req.body;
+
+  try {
+    if (text || productId) {
+      const allergen = await Allergen.findByPk(allergenId);
+      if (allergen) {
+        if (text) allergen.text = text;
+        if (productId) allergen.ProductId = productId;
+        await allergen.save();
+
+        // Successful response
+        return res.status(200).json({
+          allergen: allergen,
+          message: "Successfully changed the allergen text",
+        });
+      }
+
+      // Invalid Id no allergen found
+      return res
+        .status(422)
+        .json({ message: "Allergen not found, invalid id" });
+    }
+
+    // No text provided
+    return res.status(422).json({ message: "No text or product id provided." });
+  } catch (err) {
+    // Internal server error
+    console.error(err);
+    err.statusCode = err.statusCode ? err.statusCode : 500;
+    next(err);
   }
 };
