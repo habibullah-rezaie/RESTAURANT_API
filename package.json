@@ -12,5 +12,15 @@
     "express": "^4.17.1",
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/habibullah-rezaie/RESTAURANT_API.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/habibullah-rezaie/RESTAURANT_API/issues"
+  },
+  "homepage": "https://github.com/habibullah-rezaie/RESTAURANT_API#readme"
 }
