@@ -53,7 +53,7 @@ exports.updateProductAllergen = async (req, res, next) => {
         // Successful response
         return res.status(200).json({
           allergen: allergen,
-          message: "Successfully changed the allergen text",
+          message: "Successfully changed the allergen",
         });
       }
 
