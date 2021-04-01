@@ -1,3 +1,5 @@
+const { validationResult } = require("express-validator");
+
 const ZipCode = require("../../models/zipCode");
 
 // POST /admin/zipCodes/ => Add a new zipCode
@@ -8,6 +10,17 @@ exports.addZipCode = async (req, res, next) => {
     return res.status(422).json({
       message: "No zip code was given, unable to create a zip code.",
     });
+
+  // validation results
+  const errors = validationResult(req);
+
+  // Validation errors has occured
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Validation error occured.",
+      details: errors.array().map((err) => err.msg),
+    });
+  }
 
   try {
     // TODO: in the validation set a custom validator to prevent
