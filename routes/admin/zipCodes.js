@@ -1,5 +1,9 @@
 const express = require("express");
-const { addZipCode, updateZipCode } = require("../../controllers/admin/zip-codes");
+const {
+  addZipCode,
+  updateZipCode,
+  deleteZipCode,
+} = require("../../controllers/admin/zip-codes");
 
 const router = express.Router();
 
@@ -10,6 +14,6 @@ router.post("/", addZipCode);
 router.put("/:code", updateZipCode);
 
 // DELETE /admins/products/zipCodes/:code => delete a zip code
-router.delete("/:code", addZipCode);
+router.delete("/:code", deleteZipCode);
 
 module.exports = router;
