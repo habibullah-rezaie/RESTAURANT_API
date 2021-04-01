@@ -1,5 +1,5 @@
 const express = require("express");
-const { addZipCode } = require("../../controllers/admin/zip-codes");
+const { addZipCode, updateZipCode } = require("../../controllers/admin/zip-codes");
 
 const router = express.Router();
 
@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/", addZipCode);
 
 // PUT /admin/products/zipCode/:code => Edit a zip code
-router.put("/:code", addZipCode);
+router.put("/:code", updateZipCode);
 
 // DELETE /admins/products/zipCodes/:code => delete a zip code
 router.delete("/:code", addZipCode);

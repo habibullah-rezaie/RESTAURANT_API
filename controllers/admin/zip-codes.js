@@ -1,3 +1,5 @@
+const ZipCode = require("../../models/zipCode");
+
 // POST /admin/zipCodes/ => Add a new zipCode
 exports.addZipCode = async (req, res, next) => {
   const { code, description } = req.body;
@@ -32,7 +34,47 @@ exports.addZipCode = async (req, res, next) => {
 };
 
 // PUT /admin/zipCodes/:id => Change zipCode
-exports.addZipCode = async (req, res, next) => {}
+exports.updateZipCode = async (req, res, next) => {
+  const prevZipCode = req.params.code;
+  const { code, description } = req.body;
+
+  // Not code, nor description was given
+  if (!code && !zipCode) {
+    return res.status(422).json({
+      message: "Not code, nor description was given",
+    });
+  }
+
+  try {
+    let fetchedZipCode = await ZipCode.findByPk(prevZipCode);
+
+    if (!fetchedZipCode) {
+      return res.status(422).json({
+        message: `Invalid zip code was given for update.`,
+      });
+    }
+
+    if (description && !code) {
+      fetchedZipCode.description = description;
+      await fetchedZipCode.save();
+    }
+
+    // If any of code or description was given update the
+    if (code) {
+      await fetchedZipCode.destroy();
+      fetchedZipCode = await ZipCode.create({ code, description });
+    }
+
+    // save the zip code
+    return res.status(200).json({
+      zipCode: fetchedZipCode,
+      message: `Successfully updated the zipCode.`,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
 
 // DELETE /admin/zipCodes/:id => Delete a zipCode
-exports.addZipCode = async (req, res, next) => {}
+exports.deleteZipCode = async (req, res, next) => {};
