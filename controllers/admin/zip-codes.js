@@ -57,7 +57,18 @@ exports.updateZipCode = async (req, res, next) => {
       message: "Not code, nor description was given",
     });
   }
+  
+  // validation results
+  const errors = validationResult(req);
 
+  // Validation errors has occured
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Validation error occured.",
+      details: errors.array().map((err) => err.msg),
+    });
+  }
+  
   try {
     let fetchedZipCode = await ZipCode.findByPk(prevZipCode);
 
