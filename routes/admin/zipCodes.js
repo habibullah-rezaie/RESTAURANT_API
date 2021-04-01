@@ -55,6 +55,20 @@ router.put(
 );
 
 // DELETE /admins/products/zipCodes/:code => delete a zip code
-router.delete("/:code", deleteZipCode);
+router.delete(
+  "/:code",
+  [
+    param("code")
+      .trim()
+      .matches(/[0-9]{5}|[A-Za-z]{1}[0-9]{4}/)
+      .withMessage("Invalid postal code.")
+      .custom(async (code, { req }) => {
+        const zipCode = await ZipCode.findByPk(code);
+        if (!zipCode) throw new Error("Zip code does not exist database.");
+        return true;
+      }),
+  ],
+  deleteZipCode
+);
 
 module.exports = router;

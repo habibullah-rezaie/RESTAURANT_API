@@ -57,7 +57,7 @@ exports.updateZipCode = async (req, res, next) => {
       message: "Not code, nor description was given",
     });
   }
-  
+
   // validation results
   const errors = validationResult(req);
 
@@ -68,7 +68,7 @@ exports.updateZipCode = async (req, res, next) => {
       details: errors.array().map((err) => err.msg),
     });
   }
-  
+
   try {
     let fetchedZipCode = await ZipCode.findByPk(prevZipCode);
 
@@ -103,6 +103,18 @@ exports.updateZipCode = async (req, res, next) => {
 // DELETE /admin/zipCodes/:id => Delete a zipCode
 exports.deleteZipCode = async (req, res, next) => {
   const zipCode = req.params.code;
+
+  // validation results
+  const errors = validationResult(req);
+
+  // Validation errors has occured
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      message: "Validation error occured.",
+      details: errors.array().map((err) => err.msg),
+    });
+  }
+
   try {
     const fethcedZipCode = await ZipCode.findByPk(zipCode);
     await fethcedZipCode.destroy();
