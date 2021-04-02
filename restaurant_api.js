@@ -31,5 +31,12 @@ app.use("/admin/zipCodes", zipCodeRoutes);
 // Use routes related to timing(service time)
 app.use("/admin/timings", timingRoutes);
 
+// Error handling route
+app.use((err, req, res, next) => {
+  res.status(err.statusCode ? err.statusCode : 500).json({
+    message: `Something went wrong. Sorry! we're tring to fix it.`,
+  });
+});
+
 // Synchronize database and then make server listen
 sync(app);
