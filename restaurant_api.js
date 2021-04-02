@@ -6,6 +6,7 @@ const updateProductRoutes = require("./routes/admin/update-product");
 const zipCodeRoutes = require("./routes/admin/zipCodes");
 const timingRoutes = require("./routes/admin/timing");
 const customerRoutes = require("./routes/admin/customer");
+const productRoutes = require("./routes/restaurant/product");
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/admin/timings", timingRoutes);
 // Use routes related to customer
 app.use("/admin/customers", customerRoutes);
 
+app.use("/products", productRoutes);
 // Error handling route
 app.use((err, req, res, next) => {
   res.status(err.statusCode ? err.statusCode : 500).json({
