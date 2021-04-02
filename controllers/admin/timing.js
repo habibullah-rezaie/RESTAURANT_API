@@ -21,11 +21,29 @@ exports.addTiming = async (req, res, next) => {
     console.error(err);
     next(err);
   }
-  new Date();
 };
 
 // PUT /admin/timings/:day => update a timing given day of the week
-exports.updateTiming = async (req, res, next) => {};
+exports.updateTiming = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { opening, closing } = req.body;
+
+  try {
+    // Got timing from validator
+    req.timing.opening = opening;
+    req.timing.closing = closing;
+
+    await req.timing.save();
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+  res.json();
+};
 
 // DELETE /admin/timings/:day
 exports.deleteTiming = async (req, res, next) => {};
