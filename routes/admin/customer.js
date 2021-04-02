@@ -26,10 +26,10 @@ router.get(
     param("id")
       .trim()
       .custom(async (id, { req }) => {
-          const customer = await Customer.findByPk(id);
-          if (!customer) throw new Error("Invalid customer");
-          req.customer = customer;
-          console.error(err);
+        const customer = await Customer.findByPk(id);
+        if (!customer) throw new Error("Invalid customer");
+        req.customer = customer;
+        console.error(err);
       }),
   ],
   getCustomer
