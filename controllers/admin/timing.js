@@ -42,7 +42,10 @@ exports.updateTiming = async (req, res, next) => {
     console.error(err);
     next(err);
   }
-  res.json();
+  res.status(200).json({
+    timing: req.timing,
+    message: "Successfully updated timing",
+  });
 };
 
 // DELETE /admin/timings/:day
