@@ -49,4 +49,19 @@ exports.updateTiming = async (req, res, next) => {
 };
 
 // DELETE /admin/timings/:day
-exports.deleteTiming = async (req, res, next) => {};
+exports.deleteTiming = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  try {
+    await req.timing.destroy();
+    res.status(200).json({
+      message: `Successfully deleted timing for day ${req.params.day}`,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
