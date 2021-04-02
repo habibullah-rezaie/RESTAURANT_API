@@ -1,10 +1,11 @@
 const express = require("express");
-const { query } = require("express-validator");
+const { query, param } = require("express-validator");
 
 const {
   getCustomers,
   getCustomer,
 } = require("../../controllers/admin/customer");
+const Customer = require("../../models/customer");
 
 const router = express.Router();
 
@@ -19,6 +20,23 @@ router.get(
 );
 
 // GET /admin/customers/:id => get info about a customer
-router.get("/:id", getCustomer);
+router.get(
+  "/:id",
+  [
+    param("id")
+      .trim()
+      .custom(async (id, { req }) => {
+        try {
+          const customer = await Customer.findByPk(id);
+          if (!customer) throw new Error("Invalid customer");
+          req.customer = customer;
+        } catch (err) {
+          console.error(err);
+          throw err;
+        }
+      }),
+  ],
+  getCustomer
+);
 
 module.exports = router;
