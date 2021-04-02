@@ -4,6 +4,7 @@ const express = require("express");
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
 const zipCodeRoutes = require("./routes/admin/zipCodes");
+const timingRoutes = require("./routes/admin/timing");
 
 const app = express();
 
@@ -27,4 +28,8 @@ app.use("/admin/products", updateProductRoutes);
 // Use routes related to zip code
 app.use("/admin/zipCodes", zipCodeRoutes);
 
+// Use routes related to timing(service time)
+app.use("/admin/timings", timingRoutes);
+
+// Synchronize database and then make server listen
 sync(app);
