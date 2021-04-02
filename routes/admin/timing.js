@@ -125,6 +125,36 @@ router.put(
 
 // DELETE /admin/timings/:day => update a timing on
 // particular day
-router.delete("/:day", deleteTiming);
+router.delete(
+  "/:day",
+  [
+    // validate params day
+    param("day")
+      .trim()
+      .toLowerCase()
+      .isIn([
+        "saturday",
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+      ])
+      .withMessage("Invalid day, not one of seven days in a week")
+      .custom(async (day, { req }) => {
+        const timing = await Timing.findByPk(day);
+
+        if (!timing)
+          throw new Error(
+            `Timing does not already exist for ${day} in order to delete it.`
+          );
+
+        req.timing = timing;
+        return true;
+      }),
+  ],
+  deleteTiming
+);
 
 module.exports = router;
