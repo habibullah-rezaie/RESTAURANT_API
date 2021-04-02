@@ -1,5 +1,35 @@
+const { validationResult } = require("express-validator");
+
+const Product = require("../../models/product");
+const { sendValidatorError } = require("../../utils/error");
+
 // GET / products/ => Get list of products
-exports.getProducts = async (req, res, next) => {};
+exports.getProducts = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const category = req.productCategory;
+  const { limit, page } = req.query;
+  try {
+    const products = await Product.findAll({
+      where: {
+        ProductCategoryId: category.id,
+      },
+      limit: limit ? limit : 10,
+      offset: page ? (page - 1) * limit : page,
+    });
+
+    res.status(200).json({
+      message: "Successfully fetched products.",
+      products: products,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
 
 // GET / products/:id => Get detail of one product
 exports.getProduct = async (req, res, next) => {};
