@@ -1,4 +1,6 @@
 const express = require("express");
+const { query } = require("express-validator");
+
 const {
   getProducts,
   getProduct,
@@ -7,11 +9,32 @@ const {
   getAdditives,
   getAllergens,
 } = require("../../controllers/restaurant/product");
+const ProductCategory = require("../../models/productCategory");
 
 const router = express.Router();
 
 // GET /admin/products/ => GEt list of products
-router.get("/", getProducts);
+router.get(
+  "/",
+  [
+    query("category")
+      .trim()
+      .custom(async (ctg, { req }) => {
+        if (ctg) {
+          const fetchedCtg = await ProductCategory.findOne({
+            where: { name: ctg },
+          });
+          if (!fetchedCtg) throw new Error("Category does not exist.");
+          req.productCategory = fetchedCtg;
+          return true;
+        }
+        throw new Error("No category name was passed");
+      }),
+    query("limit").trim().isNumeric().withMessage("Limit not a number").toInt(),
+    query("page").trim().isNumeric().withMessage("Limit not a number").toInt(),
+  ],
+  getProducts
+);
 
 // GET /admin/products/:id => GEt detail single product
 router.get("/:id", getProduct);
@@ -20,7 +43,7 @@ router.get("/:id", getProduct);
 router.get("/toppings/", getToppings);
 
 // GET /admin/products/files/ => Get list of files of a product
-router.get("/files/", getFiles);
+router.get("/files/",getFiles);
 
 // GET /admin/products/allergens/ => Get list of allergens of a product
 router.get("/allergens/", getAllergens);
