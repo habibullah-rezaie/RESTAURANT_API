@@ -32,7 +32,28 @@ exports.getProducts = async (req, res, next) => {
 };
 
 // GET / products/:id => Get detail of one product
-exports.getProduct = async (req, res, next) => {};
+exports.getProduct = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+
+  res.status(200).json({
+    message: "Successfully fetched product",
+    product: {
+      id: product.id,
+      title: product.title,
+      description: product.description,
+      inPrice: product.inPrice,
+      outPrice: product.outPrice,
+      discount: product.discount,
+      createdAt: product.createdAt,
+      productCategory: product.ProductCategory,
+    },
+  });
+};
 
 // GET / products/toppings => Get get toppings of a single product
 exports.getToppings = async (req, res, next) => {};
