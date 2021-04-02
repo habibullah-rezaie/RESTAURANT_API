@@ -34,4 +34,14 @@ exports.getCustomers = async (req, res, next) => {
   }
 };
 
-exports.getCustomer = async (req, res, next) => {};
+exports.getCustomer = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  console.log(req.customer);
+  res
+    .status(200)
+    .json({ customer: req.customer, message: "Successfully fetched user." });
+};
