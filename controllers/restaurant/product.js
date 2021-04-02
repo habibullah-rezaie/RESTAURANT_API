@@ -84,4 +84,23 @@ exports.getAllergens = async (req, res, next) => {};
 exports.getAdditives = async (req, res, next) => {};
 
 // GET / products/files => Get Files of a single product
-exports.getFiles = async (req, res, next) => {};
+exports.getFiles = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+
+  try {
+    const files = await product.getFiles();
+
+    res.status(200).json({
+      files: files,
+      message: "Successfully fetched",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
