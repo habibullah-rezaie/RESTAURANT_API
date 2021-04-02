@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const ZipCode = require("../../models/zipCode");
+const { sendValidatorError } = require("../../utils/error");
 
 // POST /admin/zipCodes/ => Add a new zipCode
 exports.addZipCode = async (req, res, next) => {
@@ -14,13 +15,7 @@ exports.addZipCode = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
-  // Validation errors has occured
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      message: "Validation error occured.",
-      details: errors.array().map((err) => err.msg),
-    });
-  }
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   try {
     // TODO: in the validation set a custom validator to prevent
@@ -61,13 +56,7 @@ exports.updateZipCode = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
-  // Validation errors has occured
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      message: "Validation error occured.",
-      details: errors.array().map((err) => err.msg),
-    });
-  }
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   try {
     let fetchedZipCode = await ZipCode.findByPk(prevZipCode);
@@ -107,13 +96,7 @@ exports.deleteZipCode = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
-  // Validation errors has occured
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      message: "Validation error occured.",
-      details: errors.array().map((err) => err.msg),
-    });
-  }
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   try {
     const fethcedZipCode = await ZipCode.findByPk(zipCode);
