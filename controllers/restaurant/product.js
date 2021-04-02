@@ -56,7 +56,26 @@ exports.getProduct = async (req, res, next) => {
 };
 
 // GET / products/toppings => Get get toppings of a single product
-exports.getToppings = async (req, res, next) => {};
+exports.getToppings = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+
+  try {
+    const toppings = await product.getToppings();
+
+    res.status(200).json({
+      toppings: toppings,
+      message: "Successfully fetched",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
 
 // GET / products/allergens => Get Allergens of a single product
 exports.getAllergens = async (req, res, next) => {};
