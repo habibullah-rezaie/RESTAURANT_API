@@ -5,6 +5,7 @@ const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
 const zipCodeRoutes = require("./routes/admin/zipCodes");
 const timingRoutes = require("./routes/admin/timing");
+const customerRoutes = require("./routes/admin/customer");
 
 const app = express();
 
@@ -30,6 +31,9 @@ app.use("/admin/zipCodes", zipCodeRoutes);
 
 // Use routes related to timing(service time)
 app.use("/admin/timings", timingRoutes);
+
+// Use routes related to customer
+app.use("/admin/customers", customerRoutes);
 
 // Error handling route
 app.use((err, req, res, next) => {
