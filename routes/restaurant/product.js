@@ -53,7 +53,24 @@ router.get(
 );
 
 // GET /admin/products/toppings/ => Get list of toppings of a product
-router.get("/toppings/", getToppings);
+router.get(
+  "/:productId/toppings",
+  [
+    param("productId")
+      .trim()
+      .custom(async (productId, { req }) => {
+        if (productId) {
+          const product = await Product.findByPk(productId);
+          if (!product)
+            throw new Error("No product with given product id exists.");
+          req.product = product;
+          return true;
+        }
+        throw new Error("No product id was given");
+      }),
+  ],
+  getToppings
+);
 
 // GET /admin/products/files/ => Get list of files of a product
 router.get("/files/", getFiles);
