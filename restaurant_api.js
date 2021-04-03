@@ -9,6 +9,7 @@ const customerRoutes = require("./routes/admin/customer");
 const productRoutes = require("./routes/restaurant/product");
 
 const timingClientRoutes = require("./routes/restaurant/timing");
+const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
 
 const app = express();
 
@@ -47,6 +48,9 @@ app.use("/products", productRoutes);
 
 // Use client timing routes
 app.use("/timings", timingClientRoutes);
+
+// Use client zip code related routes
+app.use("/zipCodes", zipCodeClientRoutes);
 
 // Error handling route
 app.use((err, req, res, next) => {
