@@ -75,7 +75,24 @@ router.get(
 );
 
 // GET /admin/products/files/ => Get list of files of a product
-router.get("/files/", getFiles);
+router.get(
+  "/:productId/files/",
+  [
+    param("productId")
+      .trim()
+      .custom(async (productId, { req }) => {
+        if (productId) {
+          const product = await Product.findByPk(productId);
+          if (!product)
+            throw new Error("No product with given product id exists.");
+          req.product = product;
+          return true;
+        }
+        throw new Error("No product id was given");
+      }),
+  ],
+  getFiles
+);
 
 // GET /admin/products/allergens/ => Get list of allergens of a product
 router.get("/allergens/", getAllergens);
