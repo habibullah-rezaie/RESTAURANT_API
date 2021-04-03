@@ -44,7 +44,9 @@ router.get(
     param("id")
       .trim()
       .custom(async (id, { req }) => {
-        const product = await Product.findByPk(id, {include: ['ProductCategory']});
+        const product = await Product.findByPk(id, {
+          include: ["ProductCategory"],
+        });
         if (!product) throw new Error("No product exist with given id");
         req.product = product;
       }),
