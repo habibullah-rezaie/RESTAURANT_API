@@ -8,6 +8,8 @@ const timingRoutes = require("./routes/admin/timing");
 const customerRoutes = require("./routes/admin/customer");
 const productRoutes = require("./routes/restaurant/product");
 
+const timingClientRoutes = require("./routes/restaurant/timing");
+
 const app = express();
 
 // Allow CORS
@@ -24,10 +26,10 @@ app.use((req, res, next) => {
 // parse json requests
 app.use(json());
 
-app.use((req, res,next) => {
-  console.log(req.url)
-  next()
-})
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
+});
 
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
@@ -42,6 +44,10 @@ app.use("/admin/timings", timingRoutes);
 app.use("/admin/customers", customerRoutes);
 
 app.use("/products", productRoutes);
+
+// Use client timing routes
+app.use("/timings", timingClientRoutes);
+
 // Error handling route
 app.use((err, req, res, next) => {
   res.status(err.statusCode ? err.statusCode : 500).json({
