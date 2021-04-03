@@ -24,6 +24,11 @@ app.use((req, res, next) => {
 // parse json requests
 app.use(json());
 
+app.use((req, res,next) => {
+  console.log(req.url)
+  next()
+})
+
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
 

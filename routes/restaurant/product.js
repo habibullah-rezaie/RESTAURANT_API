@@ -115,5 +115,22 @@ router.get(
 );
 
 // GET /admin/products/additvies/ => Get list of additives of a product
-router.get("/additives/", getAdditives);
+router.get(
+  "/:productId/additives/",
+  [
+    param("productId")
+      .trim()
+      .custom(async (productId, { req }) => {
+        if (productId) {
+          const product = await Product.findByPk(productId);
+          if (!product)
+            throw new Error("No product with given product id exists.");
+          req.product = product;
+          return true;
+        }
+        throw new Error("No product id was given");
+      }),
+  ],
+  getAdditives
+);
 module.exports = router;

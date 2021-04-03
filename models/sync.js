@@ -15,6 +15,7 @@ const Topping = require("./topping");
 const OrderItemTopping = require("./orderItemTopping");
 const ProductTopping = require("./productTopping");
 const ProductCategory = require("./productCategory");
+const { belongsTo } = require("./timing");
 
 // Every Order belongs to a customer
 Order.belongsTo(Customer);

@@ -1,4 +1,6 @@
 const { validationResult } = require("express-validator");
+const Additive = require("../../models/additive");
+const Allergen = require("../../models/allergen");
 
 const Product = require("../../models/product");
 const { sendValidatorError } = require("../../utils/error");
@@ -78,10 +80,56 @@ exports.getToppings = async (req, res, next) => {
 };
 
 // GET / products/allergens => Get Allergens of a single product
-exports.getAllergens = async (req, res, next) => {};
+exports.getAllergens = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+
+  try {
+    const allergen = await Allergen.findAll({
+      where: {
+        ProductId: product.id,
+      },
+    });
+
+    res.status(200).json({
+      allergen: allergen,
+      message: "Successfully fetched",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
 
 // GET / products/additives => Get Additives of a single product
-exports.getAdditives = async (req, res, next) => {};
+exports.getAdditives = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+
+  try {
+    const additives = await Additive.findAll({
+      where: {
+        ProductId: product.id,
+      },
+    });
+
+    res.status(200).json({
+      additives: additives,
+      message: "Successfully fetched",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
 
 // GET / products/files => Get Files of a single product
 exports.getFiles = async (req, res, next) => {
