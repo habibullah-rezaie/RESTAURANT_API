@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
@@ -187,3 +188,4 @@ exports.updateProductCategory = async (req, res, next) => {
     next(err);
   }
 };
+

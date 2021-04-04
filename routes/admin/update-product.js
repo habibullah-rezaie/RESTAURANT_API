@@ -1,4 +1,5 @@
 const express = require("express");
+<<<<<<< HEAD
 const {
   updateProduct,
   updateProductAllergen,
@@ -23,5 +24,12 @@ router.put("/toppings/:id", updateProductToppings);
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put("/categories/:id", updateProductCategory);
+=======
+const { updateProduct } = require("../../controllers/admin/update-product");
+const router = express.Router();
+
+// PUT /admin/products/
+router.put("/", updateProduct);
+>>>>>>> f93baabc6d3e56bc618128048b279953abff8fa7
 
 module.exports = router;
