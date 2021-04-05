@@ -68,12 +68,18 @@ exports.getToppings = async (req, res, next) => {
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const product = req.product;
+  const { limit, page } = req.query;
 
   try {
-    const toppings = await product.getToppings();
+    const count = await product.countToppings();
+    const toppings = await product.getToppings({
+      limit: limit ? limit : 10,
+      offset: page ? (page - 1) * limit : page,
+    });
 
     res.status(200).json({
       toppings: toppings,
+      count: count,
       message: "Successfully fetched",
     });
   } catch (err) {
@@ -90,16 +96,20 @@ exports.getAllergens = async (req, res, next) => {
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const product = req.product;
+  const { limit, page } = req.query;
 
   try {
-    const allergen = await Allergen.findAll({
+    const allergen = await Allergen.findAndCountAll({
       where: {
         ProductId: product.id,
       },
+      limit: limit ? limit : 10,
+      offset: page ? (page - 1) * limit : page,
     });
 
     res.status(200).json({
-      allergen: allergen,
+      allergen: allergen.rows,
+      count: allergen.count,
       message: "Successfully fetched",
     });
   } catch (err) {
@@ -116,16 +126,20 @@ exports.getAdditives = async (req, res, next) => {
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const product = req.product;
+  const { limit, page } = req.query;
 
   try {
-    const additives = await Additive.findAll({
+    const additives = await Additive.findAndCountAll({
       where: {
         ProductId: product.id,
       },
+      limit: limit ? limit : 10,
+      offset: page ? (page - 1) * limit : page,
     });
 
     res.status(200).json({
-      additives: additives,
+      additives: additives.rows,
+      count: additives.count,
       message: "Successfully fetched",
     });
   } catch (err) {
