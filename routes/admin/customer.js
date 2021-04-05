@@ -29,7 +29,6 @@ router.get(
         const customer = await Customer.findByPk(id);
         if (!customer) throw new Error("Invalid customer");
         req.customer = customer;
-        console.error(err);
       }),
   ],
   getCustomer
