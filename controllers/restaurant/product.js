@@ -15,17 +15,20 @@ exports.getProducts = async (req, res, next) => {
   const category = req.productCategory;
   const { limit, page } = req.query;
   try {
-    const products = await Product.findAll({
-      where: {
-        ProductCategoryId: category.id,
-      },
+    const products = await Product.findAndCountAll({
+      where: category
+        ? {
+            ProductCategoryId: category.id,
+          }
+        : true,
       limit: limit ? limit : 10,
       offset: page ? (page - 1) * limit : page,
     });
 
     res.status(200).json({
       message: "Successfully fetched products.",
-      products: products,
+      products: products.rows,
+      count: products.count,
     });
   } catch (err) {
     console.error(err);
