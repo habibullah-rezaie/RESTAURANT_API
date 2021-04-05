@@ -43,38 +43,20 @@ exports.addZipCode = async (req, res, next) => {
 
 // PUT /admin/zipCodes/:id => Change zipCode
 exports.updateZipCode = async (req, res, next) => {
-  const prevZipCode = req.params.code;
-  const { code, description } = req.body;
-
-  // Not code, nor description was given
-  if (!code && !zipCode) {
-    return res.status(422).json({
-      message: "Not code, nor description was given",
-    });
-  }
-
   // validation results
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
+  const { description } = req.body;
 
+  const zipCode = req.zipCode;
   try {
-    let fetchedZipCode = await ZipCode.findByPk(prevZipCode);
-
-    if (!fetchedZipCode) {
-      return res.status(422).json({
-        message: `Invalid zip code was given for update.`,
-      });
-    }
-
-    if (description && !code) {
-      fetchedZipCode.description = description;
-      await fetchedZipCode.save();
-    }
+    zipCode.description = description;
+    await zipCode.save();
 
     // save the zip code
     return res.status(200).json({
-      zipCode: fetchedZipCode,
+      zipCode: zipCode,
       message: `Successfully updated the zipCode.`,
     });
   } catch (err) {
