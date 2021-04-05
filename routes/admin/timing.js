@@ -92,6 +92,13 @@ router.put(
         req.timing = timing;
         return true;
       }),
+    body().custom((reqBody) => {
+      const { opening, closing } = reqBody;
+
+      if (!opening && !closing)
+        throw new Error("Opening and closing should be both given.");
+      return true;
+    }),
     body("opening")
       .trim()
       .matches(
