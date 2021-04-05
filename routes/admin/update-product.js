@@ -193,6 +193,34 @@ router.put(
 );
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
-router.put("/categories/:id", updateProductCategory);
+router.put(
+  "/categories/:id",
+  [
+    param("id")
+      .trim()
+      .custom(async (id, { req }) => {
+        const category = await ProductCategory.findByPk(id);
+        console.log(category);
+        if (!category) throw new Error("No topping exist with given id");
+        req.category = category;
+      }),
+
+    body().custom(async (reqBody, { req }) => {
+      let { name, description } = reqBody;
+
+      if (!name && !description)
+        throw new Error("Nothing to update. Aborting!");
+
+      if (name && (3 > name.length || name.length > 100)) {
+        throw new Error("Invalid length for text");
+      }
+
+      if (description && description.length > 5000) {
+        throw new Error("Invalid length for description");
+      }
+    }),
+  ],
+  updateProductCategory
+);
 
 module.exports = router;
