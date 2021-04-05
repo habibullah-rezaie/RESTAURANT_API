@@ -81,7 +81,7 @@ router.delete(
       .withMessage("Invalid postal code.")
       .custom(async (code, { req }) => {
         const zipCode = await ZipCode.findByPk(code);
-        if (!zipCode) throw new Error("Zip code does not exist database.");
+        if (!zipCode) throw new Error("Zip code does not exist in database.");
 
         req.zipCode = zipCode;
         return true;
