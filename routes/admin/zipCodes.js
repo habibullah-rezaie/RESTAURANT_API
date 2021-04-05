@@ -77,11 +77,13 @@ router.delete(
   [
     param("code")
       .trim()
-      .matches(/[0-9]{5}|[A-Za-z]{1}[0-9]{4}/)
+      .isPostalCode("DE")
       .withMessage("Invalid postal code.")
       .custom(async (code, { req }) => {
         const zipCode = await ZipCode.findByPk(code);
         if (!zipCode) throw new Error("Zip code does not exist database.");
+
+        req.zipCode = zipCode;
         return true;
       }),
   ],
