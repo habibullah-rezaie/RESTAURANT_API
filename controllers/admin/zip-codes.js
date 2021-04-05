@@ -72,12 +72,6 @@ exports.updateZipCode = async (req, res, next) => {
       await fetchedZipCode.save();
     }
 
-    // If any of code or description was given update the
-    if (code) {
-      await fetchedZipCode.destroy();
-      fetchedZipCode = await ZipCode.create({ code, description });
-    }
-
     // save the zip code
     return res.status(200).json({
       zipCode: fetchedZipCode,
