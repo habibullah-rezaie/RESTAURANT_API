@@ -22,7 +22,7 @@ router.post(
     }),
     body("code")
       .trim()
-      .matches(/^[0-9]{5}|[A-Za-z]{1}[0-9]{4}$/)
+      .isPostalCode("DE")
       .withMessage("Invalid postal code.")
       .custom((code, {}) => {
         return ZipCode.findByPk(code).then((zipCode) => {
