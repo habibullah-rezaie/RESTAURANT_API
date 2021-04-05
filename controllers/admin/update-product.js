@@ -14,30 +14,33 @@ exports.updateProduct = async (req, res, next) => {
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
   const { name, description, inPrice, outPrice, discount, category } = req.body;
 
+  const product = req.product;
+
+  if (name) {
+    product.title = name;
+  }
+
+  if (description) {
+    product.description = description;
+  }
+
+  if (inPrice) product.inPrice = inPrice;
+
+  if (outPrice) product.outPrice = outPrice;
+
+  if (discount) product.discount = discount;
+
+  if (category && req.category) {
+    product.ProductCategoryId = req.category.id;
+  }
+
   try {
-    const product = await Product.findOne({ where: { id: productId } });
-    if (name) {
-      product.title = name;
-    }
-
-    if (description) {
-      product.description = description;
-    }
-
-    if (inPrice) product.inPrice = inPrice;
-
-    if (outPrice) product.outPrice = outPrice;
-
-    if (discount) product.discount = discount;
-
-    const newCtg = await ProductCategory.findOne({ where: { name: category } });
-    console.log(newCtg);
-    if (category && newCtg) {
-      product.ProductCategoryId = newCtg.id;
-    }
-
     await product.save();
-    res.send("hi");
+
+    res.json({
+      message: "Successfully updated product",
+      product: product,
+    });
   } catch (err) {
     console.error(err);
     next(err);
