@@ -44,21 +44,24 @@ router.post(
 router.put(
   "/:code",
   [
-    body("code")
+    body().custom((reqBody, {}) => {
+      const { description } = reqBody;
+
+      console.log(reqBody);
+      if (!description)
+        throw new Error("Nothing for field to update; aborting.");
+      return true;
+    }),
+    param("code")
       .trim()
-      .matches(/[0-9]{5}|[A-Za-z]{1}[0-9]{4}/)
+      .isPostalCode("DE")
       .withMessage("Invalid postal code.")
-      .custom((code, { req }) => {
-        return ZipCode.findByPk(code).then((zipCode) => {
-          // code previously exists, so can not update it
-          if (zipCode) {
-            return Promise.reject(
-              new Error(
-                "Cannot updated the zip code with new zip code because the new zip code already exists in database."
-              )
-            );
-          }
-        });
+      .custom(async (code, { req }) => {
+        console.log(code);
+        const zipCode = await ZipCode.findByPk(code);
+        if (!zipCode) throw new Error("Zip code does not exist to update.");
+
+        req.zipCode = zipCode;
       }),
     body("description")
       .trim()
