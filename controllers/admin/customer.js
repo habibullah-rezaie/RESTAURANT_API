@@ -17,7 +17,7 @@ exports.getCustomers = async (req, res, next) => {
     if (lastName) whereClause.lastName = lastName;
     if (phoneNumber) whereClause.phoneNumber = phoneNumber;
 
-    const customers = await Customer.findAll({
+    const customers = await Customer.findAndCountAll({
       where: whereClause,
       limit: limit ? +limit : 10,
       offset: page ? (+page - 1) * +limit : 0,
@@ -25,7 +25,8 @@ exports.getCustomers = async (req, res, next) => {
     });
 
     res.status(200).json({
-      customers: customers,
+      customers: customers.rows,
+      count: customers.count,
       message: `Successfully fetched all users`,
     });
   } catch (err) {
