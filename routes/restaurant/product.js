@@ -84,6 +84,22 @@ router.get(
         }
         throw new Error("No product id was given");
       }),
+    query().custom((qr) => {
+      if (
+        qr.limit !== undefined &&
+        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
+      ) {
+        throw new Error("Limit should be a number");
+      }
+
+      if (
+        qr.page !== undefined &&
+        Number.isNaN((qr.page = Number.parseInt(qr.page)))
+      ) {
+        throw new Error("Page should be a number");
+      }
+      return true;
+    }),
   ],
   getToppings
 );
@@ -124,6 +140,22 @@ router.get(
         }
         throw new Error("No product id was given");
       }),
+    query().custom((qr) => {
+      if (
+        qr.limit !== undefined &&
+        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
+      ) {
+        throw new Error("Limit should be a number");
+      }
+
+      if (
+        qr.page !== undefined &&
+        Number.isNaN((qr.page = Number.parseInt(qr.page)))
+      ) {
+        throw new Error("Page should be a number");
+      }
+      return true;
+    }),
   ],
   getAllergens
 );
@@ -144,6 +176,22 @@ router.get(
         }
         throw new Error("No product id was given");
       }),
+    query().custom((qr) => {
+      if (
+        qr.limit !== undefined &&
+        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
+      ) {
+        throw new Error("Limit should be a number");
+      }
+
+      if (
+        qr.page !== undefined &&
+        Number.isNaN((qr.page = Number.parseInt(qr.page)))
+      ) {
+        throw new Error("Page should be a number");
+      }
+      return true;
+    }),
   ],
   getAdditives
 );
