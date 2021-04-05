@@ -1,5 +1,5 @@
 const express = require("express");
-const { query, param } = require("express-validator");
+const { query, param, sanitize } = require("express-validator");
 
 const {
   getProducts,
@@ -22,6 +22,7 @@ router.get(
       .trim()
       .custom(async (ctg, { req }) => {
         if (ctg) {
+          console.log(ctg);
           const fetchedCtg = await ProductCategory.findOne({
             where: { name: ctg },
           });
@@ -29,10 +30,23 @@ router.get(
           req.productCategory = fetchedCtg;
           return true;
         }
-        throw new Error("No category name was passed");
       }),
-    query("limit").trim().isNumeric().withMessage("Limit not a number").toInt(),
-    query("page").trim().isNumeric().withMessage("Limit not a number").toInt(),
+    query().custom((qr) => {
+      if (
+        qr.limit !== undefined &&
+        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
+      ) {
+        throw new Error("Limit should be a number");
+      }
+
+      if (
+        qr.page !== undefined &&
+        Number.isNaN((qr.page = Number.parseInt(qr.page)))
+      ) {
+        throw new Error("Page should be a number");
+      }
+      return true;
+    }),
   ],
   getProducts
 );
