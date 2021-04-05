@@ -12,6 +12,7 @@ const ProductCategory = require("../../models/productCategory");
 const Product = require("../../models/product");
 const Allergen = require("../../models/allergen");
 const Additive = require("../../models/additive");
+const Topping = require("../../models/topping");
 
 const router = express.Router();
 
@@ -163,7 +164,33 @@ router.put(
 );
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
-router.put("/toppings/:id", updateProductToppings);
+router.put(
+  "/toppings/:id",
+  [
+    param("id")
+      .trim()
+      .custom(async (id, { req }) => {
+        const topping = await Topping.findByPk(id);
+        console.log(topping);
+        if (!topping) throw new Error("No topping exist with given id");
+        req.topping = topping;
+      }),
+
+    body().custom(async (reqBody, { req }) => {
+      let { title, price } = reqBody;
+
+      if (!title && !price) throw new Error("Nothing to update. Aborting!");
+
+      if (title && (3 > title.length || title.length > 100)) {
+        throw new Error("Invalid length for text");
+      }
+
+      if (price !== undefined && Number.isNaN(Number.parseFloat(price)))
+        throw new Error("Price should be numeric");
+    }),
+  ],
+  updateProductToppings
+);
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put("/categories/:id", updateProductCategory);
