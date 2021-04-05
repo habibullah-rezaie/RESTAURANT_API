@@ -1,12 +1,17 @@
+const { validationResult } = require("express-validator");
+
 const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const Topping = require("../../models/topping");
+const { sendValidatorError } = require("../../utils/error");
 
 exports.updateProduct = async (req, res, next) => {
-  const productId = req.params.id;
+  // validation results
+  const errors = validationResult(req);
 
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
   const { name, description, inPrice, outPrice, discount, category } = req.body;
 
   try {
@@ -41,7 +46,9 @@ exports.updateProduct = async (req, res, next) => {
 
 // PUT /admin/products/allergens/:id change allergen
 exports.updateProductAllergen = async (req, res, next) => {
-  const allergenId = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const { text, productId } = req.body;
 
@@ -78,7 +85,9 @@ exports.updateProductAllergen = async (req, res, next) => {
 
 // PUT /admin/products/additives/:id change additives
 exports.updateProductAdditive = async (req, res, next) => {
-  const additiveId = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const { text, productId } = req.body;
 
@@ -115,8 +124,10 @@ exports.updateProductAdditive = async (req, res, next) => {
 
 // PUT /admin/products/toppings/:id change toppings
 exports.updateProductToppings = async (req, res, next) => {
-  const toppingId = req.params.id;
+  // validation results
+  const errors = validationResult(req);
 
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
   const { title, price } = req.body;
 
   try {
@@ -155,7 +166,10 @@ exports.updateProductToppings = async (req, res, next) => {
  * PUT /admin/products/categories/:id => change a catelgories properties
  */
 exports.updateProductCategory = async (req, res, next) => {
-  const ctgId = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const { name, description } = req.body;
 
