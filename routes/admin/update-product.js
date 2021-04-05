@@ -11,6 +11,7 @@ const {
 const ProductCategory = require("../../models/productCategory");
 const Product = require("../../models/product");
 const Allergen = require("../../models/allergen");
+const Additive = require("../../models/additive");
 
 const router = express.Router();
 
@@ -127,7 +128,39 @@ router.put(
 );
 
 // PUT /admin/products/additives/id -> change the text of a specifiec additives
-router.put("/additives/:id", updateProductAdditive);
+router.put(
+  "/additives/:id",
+  [
+    param("id")
+      .trim()
+      .custom(async (id, { req }) => {
+        const additive = await Additive.findByPk(id);
+        if (!additive) throw new Error("No additive exist with given id");
+        req.additive = additive;
+      }),
+
+    body().custom(async (reqBody, { req }) => {
+      let { text, productId } = reqBody;
+
+      if (!text && !productId) throw new Error("Nothing to update. Aborting!");
+
+      if (productId && productId.length > 36) {
+        throw new Error("Invalid length for productId");
+      }
+
+      if (productId) {
+        const fetchedProduct = await Product.findByPk(productId);
+
+        if (!fetchedProduct) throw new Error("Product does not exist");
+      }
+
+      if (text && (3 > text.length || text.length > 1500)) {
+        throw new Error("Invalid length for text");
+      }
+    }),
+  ],
+  updateProductAdditive
+);
 
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put("/toppings/:id", updateProductToppings);
