@@ -67,16 +67,14 @@ exports.updateZipCode = async (req, res, next) => {
 
 // DELETE /admin/zipCodes/:id => Delete a zipCode
 exports.deleteZipCode = async (req, res, next) => {
-  const zipCode = req.params.code;
-
   // validation results
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   try {
-    const fethcedZipCode = await ZipCode.findByPk(zipCode);
-    await fethcedZipCode.destroy();
+    const zipCode = req.zipCode;
+    await zipCode.destroy();
     return res.status(200).json({
       message: "Successfully deleted the zipCode",
     });
