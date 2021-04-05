@@ -14,10 +14,24 @@ const router = express.Router();
 router.post(
   "/",
   [
+    body().custom((reqBody, {}) => {
+      const { code } = reqBody;
+
+      if (!code) throw new Error("No zip code give to add.");
+      return true;
+    }),
     body("code")
       .trim()
-      .matches(/[0-9]{5}|[A-Za-z]{1}[0-9]{4}/)
-      .withMessage("Invalid postal code."),
+      .matches(/^[0-9]{5}|[A-Za-z]{1}[0-9]{4}$/)
+      .withMessage("Invalid postal code.")
+      .custom((code, {}) => {
+        return ZipCode.findByPk(code).then((zipCode) => {
+          // code previously exists, so can not update it
+          if (zipCode) {
+            return Promise.reject(new Error("Zip code already exists"));
+          }
+        });
+      }),
     body("description")
       .trim()
       .isLength({ max: 5000 })
