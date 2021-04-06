@@ -4,11 +4,20 @@
  * the errors throw by validator
  */
 exports.sendValidatorError = (errors, res) => {
+  let statusCode = 422;
+
+  // Find a different status code.
+  const details = errors.array().map((err) => {
+    statusCode = (err.statusCode && err.statusCode) || 422;
+
+    return err.msg;
+  });
+
   // Validation errors has occured
   if (!errors.isEmpty()) {
-    return res.status(422).json({
+    return res.status(statusCode).json({
       message: "Validation error occured.",
-      details: errors.array().map((err) => err.msg),
+      details,
     });
   }
 };
