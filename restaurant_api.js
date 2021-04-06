@@ -59,8 +59,11 @@ app.use("/order", orderClientRoutes);
 
 // Error handling route
 app.use((err, req, res, next) => {
+  console.error(err);
   res.status(err.statusCode ? err.statusCode : 500).json({
-    message: `Something went wrong. Sorry! we're tring to fix it.`,
+    message: err.msg
+      ? err.msg
+      : `Something went wrong. Sorry! we're tring to fix it.`,
   });
 });
 
