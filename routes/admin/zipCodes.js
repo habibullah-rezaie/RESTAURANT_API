@@ -7,12 +7,14 @@ const {
   deleteZipCode,
 } = require("../../controllers/admin/zip-codes");
 const ZipCode = require("../../models/zipCode");
+const { isAuthenticated } = require("../../utils/auth");
 
 const router = express.Router();
 
 // POST /admin/products/zipCodes/ => Add a zip code
 router.post(
   "/",
+  isAuthenticated,
   [
     body().custom((reqBody, {}) => {
       const { code } = reqBody;
@@ -43,6 +45,7 @@ router.post(
 // PUT /admin/products/zipCode/:code => Edit a zip code
 router.put(
   "/:code",
+  isAuthenticated,
   [
     body().custom((reqBody, {}) => {
       const { description } = reqBody;
@@ -74,6 +77,7 @@ router.put(
 // DELETE /admins/products/zipCodes/:code => delete a zip code
 router.delete(
   "/:code",
+  isAuthenticated,
   [
     param("code")
       .trim()

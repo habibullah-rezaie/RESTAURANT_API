@@ -6,12 +6,14 @@ const {
   getCustomer,
 } = require("../../controllers/admin/customer");
 const Customer = require("../../models/customer");
+const { isAuthenticated } = require("../../utils/auth");
 
 const router = express.Router();
 
 // GET /admin/customers/ => Show customers
 router.get(
   "/",
+  isAuthenticated,
   query("order")
     .trim()
     .isIn(["ASC", "DESC"])
@@ -22,6 +24,7 @@ router.get(
 // GET /admin/customers/:id => get info about a customer
 router.get(
   "/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()

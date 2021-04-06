@@ -6,12 +6,14 @@ const {
   deleteTiming,
 } = require("../../controllers/admin/timing");
 const Timing = require("../../models/timing");
+const { isAuthenticated } = require("../../utils/auth");
 
 const router = express.Router();
 
 // POST /admin/timings/ => add a timing
 router.post(
   "/",
+  isAuthenticated,
   [
     body("day")
       .trim()
@@ -67,6 +69,7 @@ router.post(
 // particular day
 router.put(
   "/:day",
+  isAuthenticated,
   [
     param("day")
       .trim()
@@ -134,6 +137,7 @@ router.put(
 // particular day
 router.delete(
   "/:day",
+  isAuthenticated,
   [
     // validate params day
     param("day")

@@ -13,12 +13,14 @@ const Product = require("../../models/product");
 const Allergen = require("../../models/allergen");
 const Additive = require("../../models/additive");
 const Topping = require("../../models/topping");
+const { isAuthenticated } = require("../../utils/auth");
 
 const router = express.Router();
 
 // PUT /admin/products/:id -> update a product
 router.put(
   "/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()
@@ -96,6 +98,7 @@ router.put(
 // PUT /admin/products/allergen/id -> change the text of a specifiec allergen
 router.put(
   "/allergens/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()
@@ -131,6 +134,7 @@ router.put(
 // PUT /admin/products/additives/id -> change the text of a specifiec additives
 router.put(
   "/additives/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()
@@ -166,6 +170,7 @@ router.put(
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put(
   "/toppings/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()
@@ -195,6 +200,7 @@ router.put(
 // PUT /admin/products/toppings/id -> change the text of a specifiec toppings
 router.put(
   "/categories/:id",
+  isAuthenticated,
   [
     param("id")
       .trim()
