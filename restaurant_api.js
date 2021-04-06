@@ -2,6 +2,8 @@ const { json } = require("express");
 const express = require("express");
 require("dotenv").config();
 
+const { hash } = require("bcryptjs");
+
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
 const zipCodeRoutes = require("./routes/admin/zipCodes");
@@ -12,6 +14,7 @@ const productRoutes = require("./routes/restaurant/product");
 const timingClientRoutes = require("./routes/restaurant/timing");
 const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
 const orderClientRoutes = require("./routes/restaurant/order");
+const Admin = require("./models/admin");
 
 const app = express();
 
@@ -68,4 +71,26 @@ app.use((err, req, res, next) => {
 });
 
 // Synchronize database and then make server listen
-sync(app);
+sync(async () => {
+  try {
+    const admin = await Admin.findOne({
+      where: {
+        email: "habibullah.rezaie.8@gmail.com",
+      },
+    });
+
+    if (!admin) {
+      console.log(
+        await Admin.create({
+          firstName: "Habibullah ",
+          lastName: "Rezaie",
+          email: "habibullah.rezaie.8@gmail.com",
+          password: await hash("password", 13),
+        })
+      );
+    }
+    app.listen(8888, () => console.log("Server started on post 8888"));
+  } catch (err) {
+    console.error(err);
+  }
+});
