@@ -5,6 +5,7 @@ const { createOrder } = require("../../controllers/restaurant/order");
 const Address = require("../../models/address");
 const Customer = require("../../models/customer");
 const Product = require("../../models/product");
+const Topping = require("../../models/topping");
 const ZipCode = require("../../models/zipCode");
 
 const router = express.Router();
@@ -31,12 +32,32 @@ router.post(
       .withMessage("Entry products in json should be an array")
       .custom(async (products, { req }) => {
         const newProducts = [];
+        const toppings = {};
 
         for (const prd of products) {
           try {
             const product = await Product.findByPk(prd.id);
             if (product && !Number.isNaN(prd.qty)) {
               newProducts.push({ product, qty: prd.qty, remark: prd.remark });
+
+              const productToppings = [];
+              if (prd.toppings && prd.toppings.length > 0) {
+                for (const toppingId of prd.toppings) {
+                  const [fetchedTopping] = await product.getToppings({
+                    where: {
+                      id: toppingId,
+                    },
+                  });
+                  if (!fetchedTopping)
+                    throw new Error(
+                      "Invalid Topping for product" + product.title
+                    );
+                  productToppings.push(fetchedTopping);
+                }
+                toppings[product.id] = productToppings;
+              } else {
+                toppings[product.id] = "";
+              }
             } else if (!product) throw new Error("Invalid product id");
             else throw new Error("Invalid quantity");
           } catch (err) {
@@ -44,6 +65,9 @@ router.post(
             throw err;
           }
         }
+
+        console.log(toppings);
+        req.toppings = toppings;
         req.products = newProducts;
       }),
     body(["firstName", "lastName"])
