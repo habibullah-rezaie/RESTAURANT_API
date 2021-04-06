@@ -10,6 +10,7 @@ const zipCodeRoutes = require("./routes/admin/zipCodes");
 const timingRoutes = require("./routes/admin/timing");
 const customerRoutes = require("./routes/admin/customer");
 const productRoutes = require("./routes/restaurant/product");
+const adminLogin = require("./routes/auth/login");
 
 const timingClientRoutes = require("./routes/restaurant/timing");
 const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
@@ -59,6 +60,9 @@ app.use("/zipCodes", zipCodeClientRoutes);
 
 // Use client order related routes
 app.use("/order", orderClientRoutes);
+
+// Use login routes
+app.use("/login", adminLogin);
 
 // Error handling route
 app.use((err, req, res, next) => {
