@@ -48,7 +48,7 @@ OrderItem.belongsToMany(Topping, { through: OrderItemTopping });
 /**
  * server: An http server
  */
-module.exports = async (server) => {
+module.exports = async (cb) => {
   try {
     await database.sync({ force: false });
     // const ctg = await ProductCategory.create({
@@ -77,7 +77,7 @@ module.exports = async (server) => {
     // console.log(prod);
     // await al1.setProduct(prod);
 
-    server.listen(8888, () => console.log("Server started on post 8888"));
+    await cb();
   } catch (error) {
     console.error(error);
   }
