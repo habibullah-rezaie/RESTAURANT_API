@@ -2,6 +2,8 @@ const { validationResult } = require("express-validator");
 const Address = require("../../models/address");
 const Customer = require("../../models/customer");
 const Order = require("../../models/order");
+const OrderItem = require("../../models/OrderItem");
+const OrderItemTopping = require("../../models/orderItemTopping");
 
 const { sendValidatorError } = require("../../utils/error");
 
@@ -47,6 +49,22 @@ exports.createOrder = async (req, res, next) => {
     });
 
     await order.setProducts(products.map((prd) => prd.product));
+
+    for (const prd of products) {
+      const orderItem = await OrderItem.findOne({
+        where: {
+          OrderId: order.id,
+          ProductId: prd.product.id,
+        },
+      });
+
+      if (req.toppings[prd.product.id]) {
+        const result = await orderItem.setToppings(
+          req.toppings[prd.product.id]
+        );
+        console.log(result);
+      }
+    }
 
     return res.status(200).json({
       message: "Successfully ordered",
