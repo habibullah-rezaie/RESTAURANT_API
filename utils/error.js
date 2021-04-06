@@ -12,3 +12,15 @@ exports.sendValidatorError = (errors, res) => {
     });
   }
 };
+
+/**
+ * 
+ * @param {String} msg A message to include in error
+ * @param {Number} statusCode A statusCode to include for later error response
+ */
+exports.throwError = (msg, statusCode) => {
+  const err = new Error("ERROR");
+  err.msg = msg;
+  err.statusCode = statusCode;
+  throw err;
+};
