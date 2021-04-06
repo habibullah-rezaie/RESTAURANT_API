@@ -1,5 +1,6 @@
 const { json } = require("express");
 const express = require("express");
+require("dotenv").config();
 
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
