@@ -4,11 +4,22 @@ const express = require("express");
 
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
+
 const addproductRoutes = require("./routes/admin/add-product")
 const deleteProductRoutes = require("./routes/admin/delete-product")
 const customer = require("./routes/admin/customer")
 const addTimingRoutes = require("./routes/admin/timing")
 const deleteTimingRoutes = require("./routes/admin/dalete-timing")
+
+const zipCodeRoutes = require("./routes/admin/zipCodes");
+const timingRoutes = require("./routes/admin/timing");
+const customerRoutes = require("./routes/admin/customer");
+const productRoutes = require("./routes/restaurant/product");
+
+const timingClientRoutes = require("./routes/restaurant/timing");
+const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
+const orderClientRoutes = require("./routes/restaurant/order");
+
 
 const app = express();
 
@@ -34,11 +45,6 @@ app.use((req, res, next) => {
 // parse json requests
 app.use(json());
 
-
-app.use((req, res, next)=>{
-  console.log(req.body);
-  next()
-})
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
 
@@ -57,11 +63,42 @@ app.use("/admin/timing", addTimingRoutes)
 //used for timing deletion
 app.use("/admin/timing", deleteTimingRoutes)
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.statusCode? err.statusCode: 500).json({
-    message: err.message
-  });
-})
 
+
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
+});
+
+// Use product updating related routes
+app.use("/admin/products", updateProductRoutes);
+
+// Use routes related to zip code
+app.use("/admin/zipCodes", zipCodeRoutes);
+
+// Use routes related to timing(service time)
+app.use("/admin/timings", timingRoutes);
+
+// Use routes related to customer
+app.use("/admin/customers", customerRoutes);
+
+app.use("/products", productRoutes);
+
+// Use client timing routes
+app.use("/timings", timingClientRoutes);
+
+// Use client zip code related routes
+app.use("/zipCodes", zipCodeClientRoutes);
+
+// Use client order related routes
+app.use("/order", orderClientRoutes);
+
+// Error handling route
+app.use((err, req, res, next) => {
+  res.status(err.statusCode ? err.statusCode : 500).json({
+    message: `Something went wrong. Sorry! we're tring to fix it.`,
+  });
+});
+
+// Synchronize database and then make server listen
 sync(app);

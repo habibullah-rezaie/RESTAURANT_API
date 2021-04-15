@@ -1,0 +1,100 @@
+const express = require("express");
+const { body } = require("express-validator");
+const { Op } = require("sequelize");
+const { createOrder } = require("../../controllers/restaurant/order");
+const Address = require("../../models/address");
+const Customer = require("../../models/customer");
+const Product = require("../../models/product");
+const ZipCode = require("../../models/zipCode");
+
+const router = express.Router();
+
+// POST /order => create an order
+router.post(
+  "/",
+  [
+    body().custom((reqBody, {}) => {
+      const { firstName, lastName, phoneNumber, address, products } = reqBody;
+      if (!address) throw new Error("No address given.");
+      console.log(firstName);
+      if (!firstName || !lastName || !phoneNumber)
+        throw new Error("Invalid phone number, first name, or last name.");
+      if (!address.zipCode) throw new Error("No zip code was given.");
+      if (!address.detail) throw new Error("No Address detail was given.");
+      if (!products || products.length === 0)
+        throw new Error("No product was given.");
+
+      return true;
+    }),
+    body("products")
+      .isArray()
+      .withMessage("Entry products in json should be an array")
+      .custom(async (products, { req }) => {
+        const newProducts = [];
+
+        for (const prd of products) {
+          try {
+            const product = await Product.findByPk(prd.id);
+            if (product && !Number.isNaN(prd.qty)) {
+              newProducts.push({ product, qty: prd.qty, remark: prd.remark });
+            } else if (!product) throw new Error("Invalid product id");
+            else throw new Error("Invalid quantity");
+          } catch (err) {
+            console.error(err);
+            throw err;
+          }
+        }
+        req.products = newProducts;
+      }),
+    body(["firstName", "lastName"])
+      .trim()
+      .isLength({ max: 100 })
+      .withMessage(
+        "First name, and last name should not have more than 100 characters."
+      ),
+    body("phoneNumber")
+      .trim()
+      .isNumeric()
+      .withMessage("Non-numeric phone number.")
+      .isLength({ max: 14 })
+      .withMessage("Invalid length for phoneNumber"),
+    body("address")
+      .isObject()
+      .withMessage("Address should be an object.")
+      .custom(async (address, { req }) => {
+        if (!address) throw new Error("No address given.");
+
+        const { firstName, lastName, phoneNumber } = req.body;
+        console.log(firstName);
+        if (!firstName || !lastName || !phoneNumber)
+          throw new Error("Invalid phone number, first name, or last name.");
+        if (!address.zipCode) throw new Error("No zip code was given.");
+        if (!address.detail) throw new Error("No Address detail was given.");
+
+        const zipCode = await ZipCode.findByPk(address.zipCode);
+
+        if (!zipCode)
+          throw new Error(
+            "Invalid zip code, or we do not provide service in given zip code."
+          );
+
+        req.zipCode = zipCode;
+
+        const fetchedCustomer = await Customer.findOne({
+          where: {
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phoneNumber,
+            "$Address.detail$": { [Op.eq]: address.detail },
+            "$Address.ZipCode$": { [Op.eq]: address.zipCode },
+          },
+          include: ["Address"],
+        });
+
+        req.customer = fetchedCustomer;
+      }),
+  ],
+  createOrder
+);
+
+module.exports = router;

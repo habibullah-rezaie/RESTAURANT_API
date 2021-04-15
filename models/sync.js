@@ -15,6 +15,7 @@ const Topping = require("./topping");
 const OrderItemTopping = require("./orderItemTopping");
 const ProductTopping = require("./productTopping");
 const ProductCategory = require("./productCategory");
+const { belongsTo } = require("./timing");
 
 // Every Order belongs to a customer
 Order.belongsTo(Customer);
@@ -50,9 +51,35 @@ OrderItem.belongsToMany(Topping, { through: OrderItemTopping });
 module.exports = async (server) => {
   try {
     await database.sync({ force: false });
-    // await ProductCategory.create({name: 'food', description: 'some desc'});
-    
-    server.listen(8888, () => console.log("Server started on port 8888"));
+
+    // const ctg = await ProductCategory.create({
+    //   name: "newFood",
+    //   description: "foodery",
+    // });
+
+    // const prod = await Product.create({
+    //   title: "first product",
+    //   description: "this is first product",
+    //   inPrice: 0,
+    //   outPrice: 1,
+    //   discount: 0,
+    // });
+
+    // await prod.setProductCategory(ctg);
+    // console.log(prod);
+
+    // const al1 = await Allergen.create({ text: "this first allergen" });
+    // const al1 = await Topping.create({
+    //   title: "this second Topping",
+    //   price: 12,
+    // });
+
+    // const [prod] = await Product.findAll();
+    // console.log(prod);
+    // await al1.setProduct(prod);
+
+    server.listen(8888, () => console.log("Server started on post 8888"));
+
   } catch (error) {
     console.error(error);
   }
