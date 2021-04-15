@@ -1,3 +1,4 @@
+
 const { validationResult } = require("express-validator");
 
 const Customer = require("../../models/customer");
@@ -46,3 +47,4 @@ exports.getCustomer = async (req, res, next) => {
     .status(200)
     .json({ customer: req.customer, message: "Successfully fetched user." });
 };
+

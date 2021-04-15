@@ -12,9 +12,20 @@
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "multer": "^1.4.2",
     "express-validator": "^6.10.0",
     "jsonwebtoken": "^8.5.1",
+
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/habibullah-rezaie/RESTAURANT_API.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/habibullah-rezaie/RESTAURANT_API/issues"
+  },
+  "homepage": "https://github.com/habibullah-rezaie/RESTAURANT_API#readme"
 }
