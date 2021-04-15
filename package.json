@@ -10,10 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "multer": "^1.4.2",
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/habibullah-rezaie/RESTAURANT_API.git"

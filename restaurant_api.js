@@ -7,6 +7,8 @@ const updateProductRoutes = require("./routes/admin/update-product");
 const addproductRoutes = require("./routes/admin/add-product")
 const deleteProductRoutes = require("./routes/admin/delete-product")
 const customer = require("./routes/admin/customer")
+const addTimingRoutes = require("./routes/admin/timing")
+const deleteTimingRoutes = require("./routes/admin/dalete-timing")
 
 const app = express();
 
@@ -21,12 +23,24 @@ app.use((req, res, next) => {
   next();
 });
 
+///
+// app.use((req,res, next)=>{
+//   console.log(req.url);
+//   next()
+// })
+
+///
+
 // parse json requests
 app.use(json());
 
+
+app.use((req, res, next)=>{
+  console.log(req.body);
+  next()
+})
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
-
 
 //used for product addition 
 app.use("/admin/products", addproductRoutes)
@@ -35,6 +49,19 @@ app.use("/admin/products", addproductRoutes)
 app.use("/admin/products", deleteProductRoutes)
 
 //used for customers view
-app.use("/admin/products", customer)
+app.use("/admin/customers", customer)
+
+//used for timing
+app.use("/admin/timing", addTimingRoutes)
+
+//used for timing deletion
+app.use("/admin/timing", deleteTimingRoutes)
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.statusCode? err.statusCode: 500).json({
+    message: err.message
+  });
+})
 
 sync(app);

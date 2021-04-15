@@ -43,13 +43,16 @@ Topping.belongsToMany(Product, { through: ProductTopping });
 Product.belongsToMany(Topping, { through: ProductTopping });
 Topping.belongsToMany(OrderItem, { through: OrderItemTopping });
 OrderItem.belongsToMany(Topping, { through: OrderItemTopping });
+
 /**
  * server: An http server
  */
 module.exports = async (server) => {
   try {
     await database.sync({ force: false });
-    server.listen(8888, () => console.log("Server started on post 8888"));
+    // await ProductCategory.create({name: 'food', description: 'some desc'});
+    
+    server.listen(8888, () => console.log("Server started on port 8888"));
   } catch (error) {
     console.error(error);
   }
