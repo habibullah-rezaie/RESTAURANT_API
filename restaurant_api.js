@@ -4,15 +4,11 @@ require("dotenv").config();
 
 const { hash } = require("bcryptjs");
 
-
 const sync = require("./models/sync");
 const updateProductRoutes = require("./routes/admin/update-product");
 
-const addproductRoutes = require("./routes/admin/add-product")
-const deleteProductRoutes = require("./routes/admin/delete-product")
-const customer = require("./routes/admin/customer")
-const addTimingRoutes = require("./routes/admin/timing")
-const deleteTimingRoutes = require("./routes/admin/dalete-timing")
+const addproductRoutes = require("./routes/admin/add-product");
+const deleteProductRoutes = require("./routes/admin/delete-product");
 
 const zipCodeRoutes = require("./routes/admin/zipCodes");
 const timingRoutes = require("./routes/admin/timing");
@@ -24,7 +20,6 @@ const timingClientRoutes = require("./routes/restaurant/timing");
 const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
 const orderClientRoutes = require("./routes/restaurant/order");
 const Admin = require("./models/admin");
-
 
 const app = express();
 
@@ -48,30 +43,11 @@ app.use((req, res, next) => {
 // parse json requests
 app.use(json());
 
-// Use product updating related routes
-app.use("/admin/products", updateProductRoutes);
-
-//used for product addition 
-app.use("/admin/products", addproductRoutes)
+//used for product addition
+app.use("/admin/products", addproductRoutes);
 
 //used for product deletion
-app.use("/admin/products", deleteProductRoutes)
-
-//used for customers view
-app.use("/admin/customers", customer)
-
-//used for timing
-app.use("/admin/timing", addTimingRoutes)
-
-//used for timing deletion
-app.use("/admin/timing", deleteTimingRoutes)
-
-
-
-app.use((req, res, next) => {
-  console.log(req.url);
-  next();
-});
+app.use("/admin/products", deleteProductRoutes);
 
 // Use product updating related routes
 app.use("/admin/products", updateProductRoutes);
