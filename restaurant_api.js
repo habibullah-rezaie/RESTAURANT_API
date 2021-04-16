@@ -39,13 +39,11 @@ app.use((req, res, next) => {
   next();
 });
 
-///
-// app.use((req,res, next)=>{
-//   console.log(req.url);
-//   next()
-// })
-
-///
+// TODO: comment this in production
+app.use((req, res, next) => {
+  console.log(req.url);
+  next();
+});
 
 // parse json requests
 app.use(json());
