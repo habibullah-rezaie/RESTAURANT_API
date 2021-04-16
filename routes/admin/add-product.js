@@ -205,6 +205,26 @@ router.post(
   addToppings
 );
 
+router.post(
+  "/categories",
+  isAuthenticated,
+  [
+    body("name")
+      .isString()
+      .withMessage("Category title must be string.")
+      .trim()
+      .isLength({ min: 1, max: 255 })
+      .withMessage("Empty or to long string for category title."),
+    body("description")
+      .isString()
+      .withMessage("Category description must be string.")
+      .trim()
+      .isLength({ max: 2000 })
+      .withMessage("Too long string for category description."),
+  ],
+  addProductCategory
+);
+
 router.post("/categories", addProductCategory);
 router.post("/files", upload.array("files", 10), addFile);
 
