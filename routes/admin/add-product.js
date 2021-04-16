@@ -1,4 +1,5 @@
 const express = require("express");
+const { body } = require("express-validator");
 const multer = require("multer");
 const {
   addProduct,
@@ -8,8 +9,14 @@ const {
   addFile,
   addProductCategory,
 } = require("../../controllers/admin/add-product");
+const ProductCategory = require("../../models/productCategory");
+const { isAuthenticated } = require("../../utils/auth");
+
 const router = express.Router();
 
+/**
+ * Multer disk storage
+ */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "files/");
@@ -21,6 +28,11 @@ const storage = multer.diskStorage({
     cb(null, `${newDate}-${file.originalname}`);
   },
 });
+
+/**
+ *
+ * Filter files by size and mimetype.
+ */
 function Filter(req, file, cb) {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif|mp4/;
@@ -36,6 +48,7 @@ function Filter(req, file, cb) {
     cb("Error: Images & videos Only!", false);
   }
 }
+
 const upload = multer({
   storage: storage,
   limits: {
@@ -43,9 +56,73 @@ const upload = multer({
   },
   fileFilter: Filter,
 });
+
 // POST /admin/products/ -> add a product
-router.post("/", addProduct);
+router.post(
+  "/",
+  isAuthenticated,
+  [
+    body("category")
+      .isString()
+      .withMessage("No category, or invalid given.")
+      .trim()
+      .custom(async (ctg, { req }) => {
+        if (!ctg) throw new Error("No category was given.");
+
+        const fetchedCategory = await ProductCategory.findOne({
+          where: { name: ctg },
+        });
+
+        if (!fetchedCategory) throw new Error("Unkown cateogry.");
+
+        req.productCategory = fetchedCategory;
+      }),
+    body("name")
+      .isString()
+      .withMessage("Name should be string.")
+      .trim()
+      .isLength({ max: 64, min: 1 })
+      .withMessage("Empty or too long product name."),
+    body("description")
+      .isString()
+      .withMessage("Description should be string.")
+      .trim()
+      .isLength({ max: 5000 })
+      .withMessage("Too long product descriptoin."),
+    body("discount")
+      .isNumeric()
+      .withMessage("Discount should be number.")
+      .toFloat()
+      .custom((discount, {}) => {
+        if (discount < 0 || discount > 100)
+          throw new Error("Discount must be between 0 and 100.");
+        return true;
+      }),
+    body("inPrice")
+      .isNumeric()
+      .withMessage("inPrice should be number.")
+      .toFloat()
+      .custom((inPrice, {}) => {
+        if (inPrice < 0) throw new Error("Price cannot be negative.");
+        return true;
+      }),
+    body("outPrice")
+      .isNumeric()
+      .withMessage("outPrice should be number.")
+      .toFloat()
+      .custom((outPrice, { req }) => {
+        if (outPrice < 0) throw new Error("Price cannot be negative.");
+        if (outPrice < req.inPrice)
+          throw new Error("Selling price cannot be less than primary price.");
+
+        return true;
+      }),
+  ],
+  addProduct
+);
+
 router.post("/allergens", addAllergrns);
+
 router.post("/additives", addAdditives);
 router.post("/toppings", addToppings);
 router.post("/categories", addProductCategory);
