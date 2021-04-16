@@ -205,6 +205,7 @@ router.post(
   addToppings
 );
 
+// POST /admin/products/categories => create a cateogry 
 router.post(
   "/categories",
   isAuthenticated,
