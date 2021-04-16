@@ -9,6 +9,7 @@ const {
   addFile,
   addProductCategory,
 } = require("../../controllers/admin/add-product");
+const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const { isAuthenticated } = require("../../utils/auth");
 
@@ -121,7 +122,34 @@ router.post(
   addProduct
 );
 
-router.post("/allergens", addAllergrns);
+router.post(
+  "/allergens",
+  isAuthenticated,
+  [
+    body("productId")
+      .trim()
+      .isUUID(4)
+      .withMessage("Invalid id format")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id, {
+          include: [
+            {
+              model: ProductCategory,
+            },
+          ],
+        });
+        if (!product) throw new Error("No product exist with given id");
+        req.product = product;
+      }),
+    body("allergens")
+      .isArray()
+      .withMessage("Allergens must be an array")
+      .not()
+      .isEmpty()
+      .withMessage("Empty array of allergens. Aborting!"),
+  ],
+  addAllergrns
+);
 
 router.post("/additives", addAdditives);
 router.post("/toppings", addToppings);
