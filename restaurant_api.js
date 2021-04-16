@@ -104,7 +104,10 @@ sync(async () => {
         })
       );
     }
-    app.listen(8888, () => console.log("Server started on post 8888"));
+
+    app.listen(process.env.API_PORT, () =>
+      console.log("Server started on post 8888")
+    );
   } catch (err) {
     console.error(err);
   }
