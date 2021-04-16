@@ -4,29 +4,18 @@ const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const Topping = require("../../models/topping");
 const File = require("../../models/file");
+const { validationResult } = require("express-validator");
+const { sendValidatorError, throwError } = require("../../utils/error");
 // POST /admin/products/
 exports.addProduct = async (req, res, next) => {
-  const { category, name, description, inPrice, outPrice, discount } = req.body;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { name, description, inPrice, outPrice, discount } = req.body;
+  const category = req.productCategory;
 
   try {
-    if (!category) {
-      return res.status(422).json({
-        message: "No category was given.",
-      });
-    }
-
-    const ctg = await ProductCategory.findOne({
-      where: {
-        name: category,
-      },
-    });
-
-    if (!ctg) {
-      return res.status(422).json({
-        message: "Unknown category.",
-      });
-    }
-
     const newProduct = await Product.create({
       title: name,
       description,
@@ -35,11 +24,13 @@ exports.addProduct = async (req, res, next) => {
       discount,
     });
 
-    if (!newProduct) {
-      const err = new Error("Something went wrong, sorry!");
-      err.statusCode = 500;
-      throw err;
-    }
+    if (!newProduct)
+      throwError("Something went wrong when creating product", 500);
+
+    const fetchedRes = await newProduct.setProductCategory(category.id);
+
+    if (!fetchedRes)
+      throwError("Failed to add product to category " + category);
 
     res.status(201).json({
       product: newProduct,
