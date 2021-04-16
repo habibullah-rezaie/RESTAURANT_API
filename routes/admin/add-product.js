@@ -179,7 +179,32 @@ router.post(
   ],
   addAdditives
 );
-router.post("/toppings", addToppings);
+
+// POST /admin/products/toppings => create topping for a product
+router.post(
+  "/toppings",
+
+  isAuthenticated,
+  [
+    body("productId")
+      .trim()
+      .isUUID(4)
+      .withMessage("Invalid id format")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id);
+        if (!product) throw new Error("No product exist with given id");
+        req.product = product;
+      }),
+    body("toppings")
+      .isArray()
+      .withMessage("Toppings must be an array")
+      .not()
+      .isEmpty()
+      .withMessage("Empty array of toppings. Aborting!"),
+  ],
+  addToppings
+);
+
 router.post("/categories", addProductCategory);
 router.post("/files", upload.array("files", 10), addFile);
 
