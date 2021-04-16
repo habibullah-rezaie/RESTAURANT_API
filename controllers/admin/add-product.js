@@ -6,6 +6,7 @@ const Topping = require("../../models/topping");
 const File = require("../../models/file");
 const { validationResult } = require("express-validator");
 const { sendValidatorError, throwError } = require("../../utils/error");
+
 // POST /admin/products/
 exports.addProduct = async (req, res, next) => {
   // validation results
@@ -125,50 +126,46 @@ exports.addAdditives = async (req, res, next) => {
 };
 
 exports.addToppings = async (req, res, next) => {
-  const { toppings, productId } = req.body;
-  try {
-    const prod = await Product.findByPk(productId);
-    if (!prod) {
-      return res.status(422).json({
-        message: "Invalid Product Id",
-      });
-    }
-    console.log(toppings);
-    toppings.forEach(async (texts) => {
-      const title = texts.title;
-      const price = texts.price;
-      const newToppings = await Topping.create({
-        title: title,
-        price: price,
-      });
-      console.log(newToppings);
-      await newToppings.setProducts(prod);
-      return res.status(201).json({
-        products: req.body,
-        message: "sucessfully topping added",
-      });
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-exports.addProductCategory = async (req, res, next) => {
-  const { title, description } = req.body;
-  try {
-    const newCategory = await ProductCategory.create({
-      name: title,
-      description: description,
-    });
-    res.status(201).json({
-      product: req.body,
-      message: "Sucessfully added category",
-    });
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
-    console.log(newCategory);
+  const { toppings } = req.body;
+  const { product } = req; // Fetched product during
+
+  try {
+    const newToppings = []; // Created toppings to send
+    let warnings = ""; // Warnings to send
+
+    // Loop through the Toppings and create them.
+    for (const topping of toppings) {
+      if (topping.price !== undefined && topping.title) {
+        const newTopping = await Topping.create({
+          price: topping.price,
+          title: topping.title,
+        });
+
+        if (!newTopping) throwError("Failed to create Toppings; Sorry!");
+        await newTopping.setProducts(product.id);
+
+        newToppings.push(newTopping);
+      } else {
+        warnings =
+          "Some array elements didn't had both price and title, so skipped them.";
+      }
+    }
+
+    res.status(201).json({
+      Toppings: newToppings,
+      message: "Toppings sucessfully created additive",
+      warnings,
+    });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
+
 exports.addFile = async (req, res, next) => {
   const { productId } = req.body;
   const files = req.files;
