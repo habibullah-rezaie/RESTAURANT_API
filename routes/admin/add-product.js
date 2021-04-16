@@ -151,7 +151,34 @@ router.post(
   addAllergrns
 );
 
-router.post("/additives", addAdditives);
+router.post(
+  "/additives",
+  isAuthenticated,
+  [
+    body("productId")
+      .trim()
+      .isUUID(4)
+      .withMessage("Invalid id format")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id, {
+          include: [
+            {
+              model: ProductCategory,
+            },
+          ],
+        });
+        if (!product) throw new Error("No product exist with given id");
+        req.product = product;
+      }),
+    body("additives")
+      .isArray()
+      .withMessage("Additives must be an array")
+      .not()
+      .isEmpty()
+      .withMessage("Empty array of Additives. Aborting!"),
+  ],
+  addAdditives
+);
 router.post("/toppings", addToppings);
 router.post("/categories", addProductCategory);
 router.post("/files", upload.array("files", 10), addFile);
