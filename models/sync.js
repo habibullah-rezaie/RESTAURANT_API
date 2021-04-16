@@ -80,7 +80,6 @@ module.exports = async (cb) => {
 
 
     await cb();
-    server.listen(8888, () => console.log("Server started on post 8888"));
 
   } catch (error) {
     console.error(error);
