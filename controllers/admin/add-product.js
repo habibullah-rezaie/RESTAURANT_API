@@ -43,28 +43,42 @@ exports.addProduct = async (req, res, next) => {
 };
 
 exports.addAllergrns = async (req, res, next) => {
-  const { allergens, productId } = req.body;
-  try {
-    const prd = await Product.findByPk(productId);
-    console.log(prd);
-    if (!prd) {
-      res.status(422).json({
-        message: "Invalid product id",
-      });
-    }
-    allergens.forEach(async (texts) => {
-      const newAllergen = await Allergen.create({
-        text: texts,
-      });
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
-      await newAllergen.setProduct(prd);
-      res.status(201).json({
-        product: req.body,
-        message: "Allergen sucessfully created allergen",
-      });
+  const { allergens } = req.body;
+  const { product } = req;  // Fetched product during
+
+  try {
+    const newAllergens = [];
+
+    // Loop through the allergens and create them.
+    for (const text of allergens) {
+      if (text) {
+        try {
+          const newAllergen = await Allergen.create({
+            text: text,
+          });
+
+          if (!newAllergen) throwError("Failed to create allergens; Sorry!");
+          await newAllergen.setProduct(product.id);
+
+          newAllergens.push(newAllergen);
+        } catch (err) {
+          console.error(err);
+          next(err);
+        }
+      }
+    }
+
+    res.status(201).json({
+      allergens: newAllergens,
+      message: "Allergen sucessfully created allergen",
     });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
 
