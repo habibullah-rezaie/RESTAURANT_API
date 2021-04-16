@@ -194,19 +194,29 @@ exports.addFile = async (req, res, next) => {
   }
 };
 
-// const productId = req.body;
-// const files = req.files;
-// console.log(productId);
-// try {
-//   const prod = await Product.findByPk(productId);
-//   console.log(prod);
-//   if (!prod) {
-//     res.status(422).json({
-//       message: "Invalid Product",
-//     });
-//   }
-//   console.log(productId);
-//
-// } catch (err) {
-//   console.log(err);
-// }
+// handle /admin/products/categories and create a new category
+exports.addProductCategory = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { name, description } = req.body;
+
+  try {
+    const newCategory = await ProductCategory.create({
+      name,
+      description,
+    });
+
+    if (!newCategory)
+      throwError("Can't create category, may be it previously exists");
+
+    res.status(201).json({
+      category: newCategory,
+      message: "Create category successfully.",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
