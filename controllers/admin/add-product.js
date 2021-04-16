@@ -42,16 +42,17 @@ exports.addProduct = async (req, res, next) => {
   }
 };
 
+// handle POST /admin/products/allergens, and create allergens
 exports.addAllergrns = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const { allergens } = req.body;
-  const { product } = req;  // Fetched product during
+  const { product } = req; // Fetched product during
 
   try {
-    const newAllergens = [];
+    const newAllergens = []; // Create allergens to sendS
 
     // Loop through the allergens and create them.
     for (const text of allergens) {
@@ -82,29 +83,47 @@ exports.addAllergrns = async (req, res, next) => {
   }
 };
 
+// handle POST /admin/products/additives, and create additives
 exports.addAdditives = async (req, res, next) => {
-  const { additives, productId } = req.body;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { additives } = req.body;
+  const { product } = req; // Fetched product during
+
   try {
-    const prod = await Product.findByPk(productId);
-    if (!prod) {
-      res.status(422).json({
-        message: "Invalid Product Id",
-      });
+    const newAdditives = []; // Create additives to sendS
+
+    // Loop through the additives and create them.
+    for (const text of additives) {
+      if (text) {
+        try {
+          const newAdditive = await Additive.create({
+            text: text,
+          });
+
+          if (!newAdditive) throwError("Failed to create additives; Sorry!");
+          await newAdditive.setProduct(product.id);
+
+          newAdditives.push(newAdditive);
+        } catch (err) {
+          console.error(err);
+          next(err);
+        }
+      }
     }
-    additives.forEach(async (texts) => {
-      const newAdditives = await Additive.create({
-        text: texts,
-      });
-      await newAdditives.setProduct(prod);
-      res.status(201).json({
-        product: req.body,
-        message: "sucesssfully added additives",
-      });
+
+    res.status(201).json({
+      additives: newAdditives,
+      message: "Additives sucessfully created additive",
     });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
+
 exports.addToppings = async (req, res, next) => {
   const { toppings, productId } = req.body;
   try {
