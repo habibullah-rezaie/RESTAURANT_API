@@ -1,5 +1,5 @@
 const express = require("express");
-const { param } = require("express-validator");
+const { param, body } = require("express-validator");
 
 const {
   deleteProductCategory,
@@ -11,6 +11,7 @@ const {
   deleteProductAdditive,
   deleteProductTopping,
 } = require("../../controllers/admin/delete-product");
+const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 
 const router = express.Router();
@@ -61,7 +62,41 @@ router.delete(
   ],
   deleteProductFile
 );
-router.delete("/allergens/:id", deleteProductAllergen);
+
+// Handle /admin/product/:productId/allergens/:id
+router.delete(
+  "/:productId/allergens",
+  [
+    param("productId")
+      .isUUID(4)
+      .withMessage("Invalid id format.")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id);
+
+        if (!product) throw new Error("No product exists with given id.");
+        req.product = product;
+      }),
+    body("id").custom(async (id, { req }) => {
+      if (!req.product) return;
+
+      if (id) {
+        const allergen = await Allergen.findOne({
+          where: {
+            ProductId: req.product.id,
+            id: id,
+          },
+        });
+
+        if (!allergen)
+          throw new Error(
+            "No allergen found for given product id and allergen id"
+          );
+        req.allergen = allergen;
+      }
+    }),
+  ],
+  deleteProductAllergen
+);
 router.delete("/additives/:id", deleteProductAdditive);
 router.delete("/categories/:id", deleteProductCategory);
 router.delete("/toppings/:id", deleteProductTopping);
