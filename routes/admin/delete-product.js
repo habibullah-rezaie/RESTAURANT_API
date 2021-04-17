@@ -11,6 +11,7 @@ const {
   deleteProductAdditive,
   deleteProductTopping,
 } = require("../../controllers/admin/delete-product");
+const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 
@@ -97,7 +98,41 @@ router.delete(
   ],
   deleteProductAllergen
 );
-router.delete("/additives/:id", deleteProductAdditive);
+
+// Handle /admin/product/:productId/additives/:id
+router.delete(
+  "/:productId/additives",
+  [
+    param("productId")
+      .isUUID(4)
+      .withMessage("Invalid id format.")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id);
+
+        if (!product) throw new Error("No product exists with given id.");
+        req.product = product;
+      }),
+    body("id").custom(async (id, { req }) => {
+      if (!req.product) return;
+
+      if (id) {
+        const additive = await Additive.findOne({
+          where: {
+            ProductId: req.product.id,
+            id: id,
+          },
+        });
+
+        if (!additive)
+          throw new Error(
+            "No additive found for given product id and allergen id"
+          );
+        req.additive = additive;
+      }
+    }),
+  ],
+  deleteProductAdditive
+);
 router.delete("/categories/:id", deleteProductCategory);
 router.delete("/toppings/:id", deleteProductTopping);
 
