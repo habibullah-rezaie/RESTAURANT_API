@@ -117,34 +117,39 @@ exports.deleteProductAllergen = async (req, res, next) => {
     next(err);
   }
 };
+
+// Handle DELETE /admin/products/:productId/additives => delete
+// on or all additives of a perticular product
 exports.deleteProductAdditive = async (req, res, next) => {
-  const id = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { product, additive } = req;
+
   try {
-    const prod = await Additive.findByPk(id);
-    console.log(prod);
-    if (!prod) {
-      return res.status(422).json({
-        Message: "Invalid Additive",
+    if (additive) {
+      await additive.destroy();
+
+      return res.json({
+        message: "Additive Deleted sucessfully",
       });
     }
-    console.log(prod);
-    const deleteAdditive = await Additive.destroy({
+    await Additive.destroy({
       where: {
-        id: id,
+        ProductId: product.id,
       },
     });
-    if (!deleteAdditive) {
-      return res.status(500).json({
-        message: "Couldn`t delete Additive contact to 119",
-      });
-    }
-    return res.json({
-      message: "Additive  Deleted sucessfully",
+
+    return res.status(200).json({
+      message: "Deleted all additives for the product.",
     });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
+
 exports.deleteProductTopping = async (req, res, next) => {
   const id = req.params.id;
   try {
