@@ -1,36 +1,72 @@
+const { unlink } = require("fs/promises");
+const { join } = require("path");
+const { validationResult } = require("express-validator");
+
+const rootDir = require("../../utils/path");
 const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const Topping = require("../../models/topping");
+const { sendValidatorError, throwError } = require("../../utils/error");
+
+// Handle product deletion
 exports.deleteProduct = async (req, res, next) => {
-  const id = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
   try {
-    const prod = await Product.findByPk(id);
-    if (!id) {
-      res.status(422).json({
-        Message: "Invalid ProductId",
-      });
+    const product = req.product;
+
+    const files = await product.getFiles();
+
+    if (files.length > 0) {
+      for (const file of files) {
+        // TODO: this should be edited if change the database structure.
+        await unlink(join(rootDir, "files", file.fileName));
+        await product.removeFile(file);
+        await file.destroy();
+      }
     }
-    console.log(prod);
-    const deletePreoduct = await Product.destroy({
+
+    const allergens = await Allergen.findAll({
       where: {
-        id: id,
+        ProductId: product.id,
       },
     });
-    if (!deletePreoduct) {
-      res.status(500).json({
-        message: "Couldn`t delete product contact to 119",
-      });
+
+    for (const allergen of allergens) {
+      await allergen.destroy();
     }
-    res.send({
+
+    const additives = await Additive.findAll({
+      where: {
+        ProductId: product.id,
+      },
+    });
+
+    for (const additive of additives) {
+      await additive.destroy();
+    }
+
+    const toppings = await product.getToppings();
+
+    if (toppings.length > 0) {
+      // TODO: this should be edited if change the database structure.
+      await product.removeToppings(toppings);
+    }
+
+    await product.destroy();
+
+    res.status(200).json({
       message: "Deleted sucessfully",
     });
   } catch (err) {
     console.log(err);
   }
 };
-exports.deleteProductImage = async (req, res, next) => {};
+exports.deleteProductFile = async (req, res, next) => {};
 exports.deleteProductAllergen = async (req, res, next) => {
   const id = req.params.id;
   try {
@@ -142,5 +178,4 @@ exports.deleteProductCategory = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-  
 };
