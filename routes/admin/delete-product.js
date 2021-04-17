@@ -14,6 +14,8 @@ const {
 const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
+const ProductCategory = require("../../models/productCategory");
+const { throwError } = require("../../utils/error");
 
 const router = express.Router();
 
@@ -133,7 +135,28 @@ router.delete(
   ],
   deleteProductAdditive
 );
-router.delete("/categories/:id", deleteProductCategory);
+
+// DELETE /admin/products/categories/:id
+// Deletes a particular category,
+router.delete(
+  "/categories/:id",
+  [
+    param("id")
+      .isUUID(4)
+      .withMessage("Invalid id format.")
+      .custom(async (id, { req }) => {
+        const category = await ProductCategory.findByPk(id);
+
+        if (!category) throw new Error("No category exists with given id.");
+        req.category = category;
+      }),
+    body("force").custom(async (force, { req }) => {
+      if (force && typeof force !== "boolean")
+        throw new Error('The "force" key should have a boolean value.');
+    }),
+  ],
+  deleteProductCategory
+);
 router.delete("/toppings/:id", deleteProductTopping);
 
 module.exports = router;
