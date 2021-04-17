@@ -66,7 +66,28 @@ exports.deleteProduct = async (req, res, next) => {
     console.log(err);
   }
 };
-exports.deleteProductFile = async (req, res, next) => {};
+
+// Handle DELETE /admin/products/:productId/files
+exports.deleteProductFile = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const product = req.product;
+  const file = req.file;
+  try {
+    await product.removeFile(file);
+    await file.destroy();
+
+    res.status(200).json({
+      message: "Successfully deleted file.",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
 exports.deleteProductAllergen = async (req, res, next) => {
   const id = req.params.id;
   try {
