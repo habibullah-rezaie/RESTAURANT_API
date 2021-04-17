@@ -89,31 +89,32 @@ exports.deleteProductFile = async (req, res, next) => {
 };
 
 exports.deleteProductAllergen = async (req, res, next) => {
-  const id = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { product, allergen } = req;
+
   try {
-    const prod = await Allergen.findByPk(id);
-    console.log(prod);
-    if (!prod) {
-      return res.status(422).json({
-        Message: "Invalid Allergen",
+    if (allergen) {
+      await allergen.destroy();
+
+      return res.json({
+        message: "Allergen Deleted sucessfully",
       });
     }
-    console.log(prod);
-    const deleteAllergen = await Allergen.destroy({
+    await Allergen.destroy({
       where: {
-        id: id,
+        ProductId: product.id,
       },
     });
-    if (!deleteAllergen) {
-      return res.status(500).json({
-        message: "Couldn`t delete Alergen contact to 119",
-      });
-    }
-    return res.json({
-      message: "Allergen Deleted sucessfully",
+
+    return res.status(200).json({
+      message: "Deleted all allergens for the product.",
     });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
 exports.deleteProductAdditive = async (req, res, next) => {
