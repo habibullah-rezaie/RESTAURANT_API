@@ -23,13 +23,19 @@ exports.sendValidatorError = (errors, res) => {
 };
 
 /**
- * 
+ * Throw error; the erorr`s message would be sent to the client
+ *
+ * if you want the message to not be sent to the cliend throught error
+ * without this function
+ *
  * @param {String} msg A message to include in error
  * @param {Number} statusCode A statusCode to include for later error response
+ * @param {Object} options other attribues to add to error
  */
-exports.throwError = (msg, statusCode) => {
+exports.throwError = (msg, statusCode, options = {}) => {
   const err = new Error("ERROR");
   err.msg = msg;
   err.statusCode = statusCode;
+  Object.keys(options).forEach((key) => (err[key] = options[key]));
   throw err;
 };
