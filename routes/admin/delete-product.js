@@ -15,7 +15,7 @@ const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
-const { throwError } = require("../../utils/error");
+const ProductTopping = require("../../models/productTopping");
 
 const router = express.Router();
 
@@ -157,6 +157,48 @@ router.delete(
   ],
   deleteProductCategory
 );
-router.delete("/toppings/:id", deleteProductTopping);
+
+// DELETE /admin/products/categories/:id
+// Deletes a particular category,
+router.delete(
+  "/:productId/toppings",
+  [
+    param("productId")
+      .isUUID(4)
+      .withMessage("Invalid product id format.")
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id);
+
+        if (!product) throw new Error("No product exists with given id.");
+        req.product = product;
+      }),
+    body("id").custom(async (id, { req }) => {
+      if (!req.product) return;
+
+      console.log("id");
+      if (!id) return;
+
+      const [topping] = await req.product.getToppings({
+        where: { id },
+      });
+
+      if (!topping)
+        throw new Error(
+          "Such topping does not exist or does not belong to the product"
+        );
+
+      req.topping = topping;
+    }),
+    body("force").custom(async (force, { req }) => {
+      if (!force && !req.topping)
+        throw new Error(
+          "Either force option should be true or a topping id should be given."
+        );
+      if (force && typeof force !== "boolean")
+        throw new Error('The "force" key should have a boolean value.');
+    }),
+  ],
+  deleteProductTopping
+);
 
 module.exports = router;
