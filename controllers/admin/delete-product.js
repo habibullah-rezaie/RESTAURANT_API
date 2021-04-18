@@ -151,31 +151,48 @@ exports.deleteProductAdditive = async (req, res, next) => {
 };
 
 exports.deleteProductTopping = async (req, res, next) => {
-  const id = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { product, topping } = req;
+  const { force } = req.body;
+
   try {
-    const prod = await Topping.findByPk(id);
-    console.log(prod);
-    if (!prod) {
-      return res.status(422).json({
-        Message: "Invalid Topping",
+    if (topping) {
+      await product.removeTopping(topping);
+
+      await topping.destroy();
+
+      return res.json({
+        message: "Topping deleted sucessfully",
       });
     }
-    console.log(prod);
-    const deleteTopping = await Topping.destroy({
-      where: {
-        id: id,
-      },
-    });
-    if (!deleteTopping) {
-      return res.status(500).json({
-        message: "Couldn`t delete Topping contact to 119",
-      });
+
+    const toppings = await product.getToppings();
+
+    // If toppings list has some items
+    if (toppings.length > 0) {
+      // If force option is given, delete all toppings
+      if (force) {
+        await product.removeToppings(toppings);
+        for (const tp of toppings) {
+          await tp.destroy();
+        }
+
+        return res.status(200).json({
+          message: "Deleted all toppings of the product.",
+        });
+      }
     }
-    return res.json({
-      message: "Topping deleted sucessfully",
+
+    // Toppings is empty, and force option given
+    return res.status(400).json({
+      message: "Product deos not have any toppings to delete.",
     });
   } catch (err) {
     console.log(err);
+    next(err);
   }
 };
 
