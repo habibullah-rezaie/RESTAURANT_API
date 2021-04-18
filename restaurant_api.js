@@ -14,6 +14,7 @@ const zipCodeRoutes = require("./routes/admin/zipCodes");
 const timingRoutes = require("./routes/admin/timing");
 const customerRoutes = require("./routes/admin/customer");
 const productRoutes = require("./routes/restaurant/product");
+const discountRoutes = require("./routes/admin/discount");
 const adminLogin = require("./routes/auth/login");
 
 const timingClientRoutes = require("./routes/restaurant/timing");
@@ -60,6 +61,9 @@ app.use("/admin/timings", timingRoutes);
 
 // Use routes related to customer
 app.use("/admin/customers", customerRoutes);
+
+// Use admin routes related to discount
+app.use("/admin/discount/", discountRoutes);
 
 app.use("/products", productRoutes);
 
