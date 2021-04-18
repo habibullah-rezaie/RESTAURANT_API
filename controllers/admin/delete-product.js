@@ -178,31 +178,47 @@ exports.deleteProductTopping = async (req, res, next) => {
     console.log(err);
   }
 };
+
+// DELETE /admin/products/categories => Delete a category
 exports.deleteProductCategory = async (req, res, next) => {
-  const id = req.params.id;
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  // Stored category during validations in validators
+  const { category } = req;
+  const { force } = req.body;
   try {
-    const prod = await ProductCategory.findByPk(id);
-    console.log(prod);
-    if (!prod) {
-      return res.status(422).json({
-        Message: "Invalid Category",
-      });
-    }
-    console.log(prod);
-    const deleteTopping = await ProductCategory.destroy({
+    // Find all products in the category
+    const products = await Product.findAll({
       where: {
-        id: id,
+        ProductCategoryId: category.id,
       },
     });
-    if (!deleteTopping) {
-      return res.status(500).json({
-        message: "Couldn`t delete Category contact to 119",
-      });
+
+    // Does category contain any product?
+    // If so, delete it only if the force option is given.
+    if (products.length > 0) {
+      if (force) {
+        for (const product of products) {
+          await deleteProduct(product);
+        }
+      } else {
+        return res.status(400).json({
+          message:
+            'Could not delete the category because it is not empty. Use "force" ' +
+            "option to delete all containing products.",
+        });
+      }
     }
-    return res.json({
-      message: "Category deleted sucessfully",
+
+    await category.destroy();
+
+    res.status(200).json({
+      message: "Successfully deleted the product category",
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    next(err);
   }
 };
