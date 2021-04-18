@@ -78,6 +78,12 @@ app.use("/login", adminLogin);
 // Error handling route
 app.use((err, req, res, next) => {
   console.error(err);
+
+  if (err.specialType === "FILE_FILTER") {
+    return res.status(err.statusCode ? err.statusCode : 500).json({
+      message: err.message,
+    });
+  }
   res.status(err.statusCode ? err.statusCode : 500).json({
     message: err.msg
       ? err.msg
