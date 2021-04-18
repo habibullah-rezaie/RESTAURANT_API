@@ -9,6 +9,7 @@ const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const Topping = require("../../models/topping");
 const { sendValidatorError, throwError } = require("../../utils/error");
+const { deleteProduct } = require("../../utils/product");
 
 // Handle product deletion
 exports.deleteProduct = async (req, res, next) => {
@@ -19,46 +20,9 @@ exports.deleteProduct = async (req, res, next) => {
   try {
     const product = req.product;
 
-    const files = await product.getFiles();
+    const deleteResult = await deleteProduct(product);
 
-    if (files.length > 0) {
-      for (const file of files) {
-        // TODO: this should be edited if change the database structure.
-        await unlink(join(rootDir, "files", file.fileName));
-        await product.removeFile(file);
-        await file.destroy();
-      }
-    }
-
-    const allergens = await Allergen.findAll({
-      where: {
-        ProductId: product.id,
-      },
-    });
-
-    for (const allergen of allergens) {
-      await allergen.destroy();
-    }
-
-    const additives = await Additive.findAll({
-      where: {
-        ProductId: product.id,
-      },
-    });
-
-    for (const additive of additives) {
-      await additive.destroy();
-    }
-
-    const toppings = await product.getToppings();
-
-    if (toppings.length > 0) {
-      // TODO: this should be edited if change the database structure.
-      await product.removeToppings(toppings);
-    }
-
-    await product.destroy();
-
+    if (!deleteResult) throwError("Deleting was unsuccessful");
     res.status(200).json({
       message: "Deleted sucessfully",
     });
