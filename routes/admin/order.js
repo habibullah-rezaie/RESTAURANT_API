@@ -1,5 +1,5 @@
 const express = require("express");
-const { query } = require("express-validator");
+const { query, param } = require("express-validator");
 
 const {
   getOrders,
@@ -8,6 +8,7 @@ const {
 } = require("../../controllers/admin/order");
 const { isAuthenticated } = require("../../utils/auth");
 const ZipCode = require("../../models/zipCode");
+const Order = require("../../models/order");
 
 const router = express.Router();
 
@@ -91,6 +92,23 @@ router.get(
 router.get("/:id", isAuthenticated, [], getSingleOrder);
 
 // PATCH /admin/orders/:id => change the isDone COL' value in DB
-router.patch("/:id", isAuthenticated, [], changeOrderSentStatus);
+router.patch(
+  "/:id",
+  isAuthenticated,
+  [
+    param("id")
+      .trim()
+      .isUUID(4)
+      .withMessage("Invalid id format")
+      .custom(async (id, { req }) => {
+        const order = await Order.findByPk(id);
+
+        if (!order) throw new Error("No order exist with given id");
+
+        req.order = order;
+      }),
+  ],
+  changeOrderSentStatus
+);
 
 module.exports = router;
