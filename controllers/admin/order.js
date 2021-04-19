@@ -74,4 +74,24 @@ exports.getOrders = async (req, res, next) => {
 exports.getSingleOrder = async (req, res, next) => {};
 
 // handle PATCH /admin/orders/:id
-exports.changeOrderSentStatus = async (req, res, next) => {};
+exports.changeOrderSentStatus = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const { order } = req;
+
+  try {
+    console.log(order.isDone);
+    order.isDone = !order.isDone;
+    const savedOrder = await order.save();
+
+    res.status(200).json({
+      order: savedOrder,
+      message: "Successfully updated order send status.",
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
