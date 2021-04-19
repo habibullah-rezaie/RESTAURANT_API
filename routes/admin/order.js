@@ -26,7 +26,8 @@ router.get(
       .optional()
       .trim()
       .isNumeric()
-      .withMessage("The limit entry should have a numeric value.").toInt(),
+      .withMessage("The limit entry should have a numeric value.")
+      .toInt(),
     query("isDone")
       .optional()
       .trim()
