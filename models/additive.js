@@ -1,4 +1,4 @@
-const { Model, UUID, UUIDV4, TEXT } = require("sequelize");
+const { Model, UUID, UUIDV4, STRING } = require("sequelize");
 const sequelize = require("./sequelize");
 
 class Additive extends Model {}
@@ -12,7 +12,7 @@ Additive.init(
       allowNull: false,
     },
     text: {
-      type: TEXT,
+      type: STRING,
       allowNull: false,
       unique: true,
     },
