@@ -13,7 +13,6 @@ const Additive = require("./additive");
 const Allergen = require("./allergen");
 const Topping = require("./topping");
 const OrderItemTopping = require("./orderItemTopping");
-const ProductTopping = require("./productTopping");
 const ProductCategory = require("./productCategory");
 
 // Every Order belongs to a customer
