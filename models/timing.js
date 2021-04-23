@@ -10,6 +10,7 @@ Timing.init(
       type: STRING(20),
       primaryKey: true,
       allowNull: false,
+      unique: true,
     },
     opening: {
       type: TIME,
