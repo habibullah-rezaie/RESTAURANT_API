@@ -167,26 +167,28 @@ exports.addToppings = async (req, res, next) => {
 };
 
 exports.addFile = async (req, res, next) => {
-  const { productId } = req.body;
-  const files = req.files;
-  console.log(files);
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const file = req.file;
+
   try {
-    const prod = await Product.findByPk(productId);
-    if (!prod) {
-      return res.status(422).json({
-        message: "Invalid Product Id",
-      });
-    }
-    console.log(productId);
+    if (!file) throwError("No file sent with request; Aborting!", 422);
+
+    const product = req.product;
+
     const newFile = await File.create({
-      productId,
+      fileName: file.filename,
     });
-    if (!newFile) {
-      res.status(422).json({
-        message: "faild to add file",
-      });
-    }
-    return res(201).json({
+
+    const fetchedFile = product.addFiles(newFile);
+
+    if (!fetchedFile) throwError("Cannot add file for the product, weired.");
+    const count = await product.countFiles();
+    return res.status(201).json({
+      count,
+      file: file.path,
       message: "sucessfully added files",
     });
   } catch (err) {
