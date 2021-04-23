@@ -12,6 +12,8 @@ const {
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
 const { isAuthenticated } = require("../../utils/auth");
+const { addFileMulterFilter } = require("../../utils/multer-file-filters");
+const { addFileMulterstorage } = require("../../utils/multer-file-storages");
 
 const router = express.Router();
 
@@ -226,7 +228,37 @@ router.post(
   addProductCategory
 );
 
-router.post("/categories", addProductCategory);
-router.post("/files", upload.array("files", 10), addFile);
+// POST /admin/products/:productId/files
+// => Add a file for a product
+router.post(
+  "/:productId/files",
+  isAuthenticated,
+
+  param("productId")
+    .trim()
+    .isUUID(4)
+    .withMessage("Invalid id format")
+    .custom(async (id, { req }) => {
+      const product = await Product.findByPk(id);
+      if (!product) throw new Error("No product exist with given id");
+
+      const count = await product.countFiles();
+
+      if (count >= 10)
+        throw new Error("Cannot have more than 10 files for a product.");
+      req.product = product;
+    }),
+
+  // Use multer for file storage
+  multer({
+    storage: addFileMulterstorage,
+    limits: {
+      fileSize: 1023 * 1024 * 15,
+    },
+    fileFilter: addFileMulterFilter,
+  }).single("file"),
+
+  addFile
+);
 
 module.exports = router;
