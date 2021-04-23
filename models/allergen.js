@@ -12,7 +12,7 @@ Allergen.init(
       allowNull: false,
     },
     text: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
       allowNull: false,
     },
   },
