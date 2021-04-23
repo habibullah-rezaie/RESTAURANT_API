@@ -24,6 +24,7 @@ exports.isAuthenticated = (req, res, next) => {
         throwError("Invalid token.", 401);
       }
 
+      req.admin = decoded.admin.email;
       next();
     }
   );
