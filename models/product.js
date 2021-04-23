@@ -22,6 +22,7 @@ Product.init(
     title: {
       type: STRING,
       allowNull: false,
+      unique: true,
     },
     description: {
       type: TEXT,
