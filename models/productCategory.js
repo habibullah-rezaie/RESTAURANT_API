@@ -16,7 +16,7 @@ ProductCategory.init(
       allowNull: false,
     },
     description: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
     },
   },
   { sequelize, timestamps: false }

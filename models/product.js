@@ -24,7 +24,7 @@ Product.init(
       allowNull: false,
     },
     description: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
     },
     inPrice: {
       type: SMALLINT,

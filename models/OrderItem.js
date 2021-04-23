@@ -12,7 +12,7 @@ OrderItem.init(
       allowNull: false,
     },
     remark: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
     },
     qty: {
       type: SMALLINT,
