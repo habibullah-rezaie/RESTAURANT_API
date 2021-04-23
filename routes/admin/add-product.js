@@ -17,49 +17,6 @@ const { addFileMulterstorage } = require("../../utils/multer-file-storages");
 
 const router = express.Router();
 
-/**
- * Multer disk storage
- */
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "files/");
-  },
-  filename: function (req, file, cb) {
-    const admin = "habib";
-    const newDate = new Date().toISOString();
-    console.log(newDate);
-    cb(null, `${newDate}-${file.originalname}`);
-  },
-});
-
-/**
- *
- * Filter files by size and mimetype.
- */
-function Filter(req, file, cb) {
-  // Allowed ext
-  const filetypes = /jpeg|jpg|png|gif|mp4/;
-
-  // Check ext
-  const extname = filetypes.test(file.originalname);
-  // Check mime
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb("Error: Images & videos Only!", false);
-  }
-}
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 15,
-  },
-  fileFilter: Filter,
-});
-
 // POST /admin/products/ -> add a product
 router.post(
   "/",
