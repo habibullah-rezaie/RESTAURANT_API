@@ -20,7 +20,7 @@ Product.init(
       allowNull: false,
     },
     title: {
-      type: STRING(64),
+      type: STRING,
       allowNull: false,
     },
     description: {
