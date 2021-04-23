@@ -19,8 +19,11 @@ Topping.init(
       type: SMALLINT,
       allowNull: false,
     },
+    ProductId: {
+      type: UUID,
+    },
   },
-  { sequelize }
+  { sequelize, indexes: [{ unique: true, fields: ["ProductId", "title"] }] }
 );
 
 module.exports = Topping;
