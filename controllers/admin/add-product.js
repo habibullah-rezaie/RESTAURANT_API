@@ -58,19 +58,14 @@ exports.addAllergrns = async (req, res, next) => {
     // Loop through the allergens and create them.
     for (const text of allergens) {
       if (text) {
-        try {
-          const newAllergen = await Allergen.create({
-            text: text,
-          });
+        const newAllergen = await Allergen.create({
+          text: text,
+        });
 
-          if (!newAllergen) throwError("Failed to create allergens; Sorry!");
-          await newAllergen.setProduct(product.id);
+        if (!newAllergen) throwError("Failed to create allergens; Sorry!");
+        await newAllergen.setProduct(product.id);
 
-          newAllergens.push(newAllergen);
-        } catch (err) {
-          console.error(err);
-          next(err);
-        }
+        newAllergens.push(newAllergen);
       }
     }
 
