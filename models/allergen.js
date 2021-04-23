@@ -14,6 +14,7 @@ Allergen.init(
     text: {
       type: TEXT,
       allowNull: false,
+      unique: true,
     },
   },
   { sequelize }
