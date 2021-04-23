@@ -17,12 +17,15 @@ const ProductCategory = require("./productCategory");
 
 // Every Order belongs to a customer
 Order.belongsTo(Customer);
+Customer.hasMany(Order);
 
 // Every Customer has an address
 Customer.belongsTo(Address);
+Address.hasMany(Customer);
 
 // Every Address has a zip code
 Address.belongsTo(ZipCode, { as: "Zip" });
+ZipCode.hasMany(Address);
 
 // Product has many files
 Product.belongsToMany(File, { through: ProductFile });
@@ -34,9 +37,13 @@ Order.belongsToMany(Product, { through: OrderItem });
 
 // Every product belongs to a special product
 Product.belongsTo(ProductCategory);
+ProductCategory.hasMany(Product);
 
 Additive.belongsTo(Product);
+Product.hasMany(Additive);
+
 Allergen.belongsTo(Product);
+Product.hasMany(Allergen);
 
 Product.hasMany(Topping);
 Topping.belongsTo(Product);
