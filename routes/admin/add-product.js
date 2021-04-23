@@ -1,5 +1,5 @@
 const express = require("express");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const multer = require("multer");
 const {
   addProduct,
@@ -87,16 +87,9 @@ router.post(
   [
     body("productId")
       .trim()
-      .isUUID(4)
-      .withMessage("Invalid id format")
       .custom(async (id, { req }) => {
-        const product = await Product.findByPk(id, {
-          include: [
-            {
-              model: ProductCategory,
-            },
-          ],
-        });
+        if (!id) throw new Error("No product id was give.");
+        const product = await Product.findByPk(id);
         if (!product) throw new Error("No product exist with given id");
         req.product = product;
       }),
@@ -119,13 +112,7 @@ router.post(
       .isUUID(4)
       .withMessage("Invalid id format")
       .custom(async (id, { req }) => {
-        const product = await Product.findByPk(id, {
-          include: [
-            {
-              model: ProductCategory,
-            },
-          ],
-        });
+        const product = await Product.findByPk(id);
         if (!product) throw new Error("No product exist with given id");
         req.product = product;
       }),
@@ -164,7 +151,7 @@ router.post(
   addToppings
 );
 
-// POST /admin/products/categories => create a cateogry 
+// POST /admin/products/categories => create a cateogry
 router.post(
   "/categories",
   isAuthenticated,
