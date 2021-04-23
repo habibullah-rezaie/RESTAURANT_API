@@ -14,6 +14,7 @@ ProductCategory.init(
     name: {
       type: STRING,
       allowNull: false,
+      unique: true,
     },
     description: {
       type: TEXT,
