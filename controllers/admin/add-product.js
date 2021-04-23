@@ -141,7 +141,7 @@ exports.addToppings = async (req, res, next) => {
         });
 
         if (!newTopping) throwError("Failed to create Toppings; Sorry!");
-        await newTopping.setProducts(product.id);
+        await newTopping.addProducts(product.id);
 
         newToppings.push(newTopping);
       } else {
