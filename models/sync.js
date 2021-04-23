@@ -38,8 +38,9 @@ Product.belongsTo(ProductCategory);
 Additive.belongsTo(Product);
 Allergen.belongsTo(Product);
 
-Topping.belongsToMany(Product, { through: ProductTopping });
-Product.belongsToMany(Topping, { through: ProductTopping });
+Product.hasMany(Topping);
+Topping.belongsTo(Product);
+
 Topping.belongsToMany(OrderItem, { through: OrderItemTopping });
 OrderItem.belongsToMany(Topping, { through: OrderItemTopping });
 /**
