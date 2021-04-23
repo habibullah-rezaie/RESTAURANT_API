@@ -9,6 +9,8 @@ const {
 const { isAuthenticated } = require("../../utils/auth");
 const ZipCode = require("../../models/zipCode");
 const Order = require("../../models/order");
+const Customer = require("../../models/customer");
+const Address = require("../../models/address");
 
 const router = express.Router();
 
@@ -89,7 +91,33 @@ router.get(
 );
 
 // GET /admin/orders/:id => return details of an specific order
-router.get("/:id", isAuthenticated, [], getSingleOrder);
+router.get(
+  "/:id",
+  isAuthenticated,
+  [
+    param("id")
+      .trim()
+      .isUUID(4)
+      .withMessage("Invalid id format")
+      .custom(async (id, { req }) => {
+        const order = await Order.findByPk(id, {
+          attributes: ["id", "isDone", "createdAt"],
+          include: [
+            {
+              model: Customer,
+              attributes: ["createdAt", "firstName", "lastName"],
+              include: [{ model: Address, attributes: ["detail", "ZipCode"] }],
+            },
+          ],
+        });
+
+        if (!order) throw new Error("No order exist with given id");
+
+        req.order = order;
+      }),
+  ],
+  getSingleOrder
+);
 
 // PATCH /admin/orders/:id => change the isDone COL' value in DB
 router.patch(
