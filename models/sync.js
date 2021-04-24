@@ -7,7 +7,6 @@ const Order = require("./order");
 const Customer = require("./customer");
 const ZipCode = require("./zipCode");
 const Address = require("./address");
-const ProductFile = require("./productFile");
 const OrderItem = require("./OrderItem");
 const Additive = require("./additive");
 const Allergen = require("./allergen");
@@ -28,8 +27,8 @@ Address.belongsTo(ZipCode, { as: "Zip" });
 ZipCode.hasMany(Address);
 
 // Product has many files
-Product.belongsToMany(File, { through: ProductFile });
-File.belongsToMany(Product, { through: ProductFile });
+Product.hasMany(File);
+File.belongsTo(Product)
 
 // Product belongs to several orders
 Product.belongsToMany(Order, { through: OrderItem });
