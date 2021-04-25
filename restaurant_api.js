@@ -87,16 +87,24 @@ app.use("/login", adminLogin);
 app.use((err, req, res, next) => {
   console.error(err);
 
-  if (err.specialType === "FILE_FILTER") {
-    return res.status(err.statusCode ? err.statusCode : 500).json({
-      message: err.message,
-    });
+  switch (err.SPECIAL_TYPE) {
+    case "FILE_FILTER":
+      return res.status(err.statusCode ? err.statusCode : 500).json({
+        message: err.message,
+      });
+
+    default:
+      // In case of unique constraint voilation
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(422).json({ message: "Data Already exists." });
+      }
+
+      res.status(err.statusCode ? err.statusCode : 500).json({
+        message: err.msg
+          ? err.msg
+          : `Something went wrong. Sorry! we're tring to fix it.`,
+      });
   }
-  res.status(err.statusCode ? err.statusCode : 500).json({
-    message: err.msg
-      ? err.msg
-      : `Something went wrong. Sorry! we're tring to fix it.`,
-  });
 });
 
 // Synchronize database and then make server listen
@@ -111,7 +119,7 @@ sync(async () => {
     if (!admin) {
       console.log(
         await Admin.create({
-          firstName: "Habibullah ",
+          firstName: "Habibullah",
           lastName: "Rezaie",
           email: "habibullah.rezaie.8@gmail.com",
           password: await hash("password", 13),
