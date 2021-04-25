@@ -27,6 +27,7 @@ exports.updateProduct = async (req, res, next) => {
 
   if (category && req.category) {
     product.ProductCategoryId = req.category.id;
+    product.dataValues.ProductCategory = req.category;
   }
 
   try {
