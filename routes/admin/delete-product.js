@@ -15,7 +15,6 @@ const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
-const ProductTopping = require("../../models/productTopping");
 
 const router = express.Router();
 
