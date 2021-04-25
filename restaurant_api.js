@@ -87,7 +87,7 @@ app.use("/login", adminLogin);
 app.use((err, req, res, next) => {
   console.error(err);
 
-  switch (err.SPECIAL_TYPE) {
+  switch (err.specialType) {
     case "FILE_FILTER":
       return res.status(err.statusCode ? err.statusCode : 500).json({
         message: err.message,
