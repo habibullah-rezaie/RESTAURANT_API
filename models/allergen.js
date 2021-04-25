@@ -14,10 +14,13 @@ Allergen.init(
     text: {
       type: STRING,
       allowNull: false,
-      unique: true,
     },
   },
-  { sequelize }
+  {
+    sequelize,
+    indexes: [{ unique: true, fields: ["id", "text"] }],
+    timestamps: false,
+  }
 );
 
 module.exports = Allergen;

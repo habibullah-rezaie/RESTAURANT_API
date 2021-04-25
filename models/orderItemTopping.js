@@ -12,7 +12,7 @@ OrderItemTopping.init(
       allowNull: false,
     },
   },
-  { sequelize }
+  { sequelize, timestamps: false}
 );
 
 module.exports = OrderItemTopping;
