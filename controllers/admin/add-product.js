@@ -79,7 +79,7 @@ exports.addAllergrns = async (req, res, next) => {
     res.status(201).json({
       allergens: newAllergens,
       message: "Allergen sucessfully created allergen",
-      warnings,
+      warning,
     });
   } catch (err) {
     console.log(err);
