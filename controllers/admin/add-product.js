@@ -55,24 +55,25 @@ exports.addAllergrns = async (req, res, next) => {
   try {
     const newAllergens = []; // Create allergens to sendS
 
-    let warnings = ""; // wanings
+    let warning = ""; // warning
 
     // Loop through the allergens and create them.
     for (const text of allergens) {
       // validate for type, and length
       if (!text || typeof text !== "string" || text.length > 255) {
+        warning =
+          "Some invalid allergen (invalid type, or length or empty string) included, skipped them.";
+        continue;
       }
 
-      if (text) {
-        const newAllergen = await Allergen.create({
-          text: text,
-        });
+      const newAllergen = await Allergen.create({
+        text: text,
+      });
 
-        if (!newAllergen) throwError("Failed to create allergens; Sorry!");
-        await newAllergen.setProduct(product.id);
+      if (!newAllergen) throwError("Failed to create allergens; Sorry!");
+      await newAllergen.setProduct(product.id);
 
-        newAllergens.push(newAllergen);
-      }
+      newAllergens.push(newAllergen);
     }
 
     res.status(201).json({
