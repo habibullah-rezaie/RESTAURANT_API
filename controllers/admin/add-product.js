@@ -38,7 +38,6 @@ exports.addProduct = async (req, res, next) => {
       message: "Successfully created a product.",
     });
   } catch (err) {
-    console.error(err);
     next(err);
   }
 };
@@ -82,7 +81,6 @@ exports.addAllergrns = async (req, res, next) => {
       warning,
     });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
@@ -118,7 +116,6 @@ exports.addAdditives = async (req, res, next) => {
 
         newAdditives.push(newAdditive);
       } catch (err) {
-        console.error(err);
         next(err);
       }
     }
@@ -129,7 +126,6 @@ exports.addAdditives = async (req, res, next) => {
       warnings: warning,
     });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
@@ -170,7 +166,6 @@ exports.addToppings = async (req, res, next) => {
       warnings,
     });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
@@ -201,7 +196,7 @@ exports.addFile = async (req, res, next) => {
       message: "sucessfully added files",
     });
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
@@ -227,7 +222,6 @@ exports.addProductCategory = async (req, res, next) => {
       message: "Create category successfully.",
     });
   } catch (err) {
-    console.error(err);
     next(err);
   }
 };
