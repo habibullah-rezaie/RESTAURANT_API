@@ -1,9 +1,5 @@
 const { validationResult } = require("express-validator");
 
-const Additive = require("../../models/additive");
-const Allergen = require("../../models/allergen");
-const ProductCategory = require("../../models/productCategory");
-const Topping = require("../../models/topping");
 const { sendValidatorError } = require("../../utils/error");
 
 exports.updateProduct = async (req, res, next) => {
