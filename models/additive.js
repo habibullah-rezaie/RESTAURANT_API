@@ -14,10 +14,13 @@ Additive.init(
     text: {
       type: STRING,
       allowNull: false,
-      unique: true,
     },
   },
-  { sequelize, timestamps: false }
+  {
+    sequelize,
+    timestamps: false,
+    indexes: [{ unique: true, fields: ["id", "text"] }],
+  }
 );
 
 module.exports = Additive;
