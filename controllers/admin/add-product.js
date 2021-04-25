@@ -55,11 +55,13 @@ exports.addAllergrns = async (req, res, next) => {
   try {
     const newAllergens = []; // Create allergens to sendS
 
+    let warnings = ""; // wanings
+
     // Loop through the allergens and create them.
     for (const text of allergens) {
       // validate for type, and length
-      if (typeof text !== "string" || text.length > 255)
-        throwError("Invalid allergen.", 422);
+      if (!text || typeof text !== "string" || text.length > 255) {
+      }
 
       if (text) {
         const newAllergen = await Allergen.create({
@@ -76,6 +78,7 @@ exports.addAllergrns = async (req, res, next) => {
     res.status(201).json({
       allergens: newAllergens,
       message: "Allergen sucessfully created allergen",
+      warnings,
     });
   } catch (err) {
     console.log(err);
@@ -94,29 +97,35 @@ exports.addAdditives = async (req, res, next) => {
 
   try {
     const newAdditives = []; // Create additives to sendS
-
+    let warning = "";
     // Loop through the additives and create them.
     for (const text of additives) {
-      if (text) {
-        try {
-          const newAdditive = await Additive.create({
-            text: text,
-          });
+      // validate for type, and length
+      if (!text || typeof text !== "string" || text.length > 255) {
+        warning =
+          "Some invalid additives (invalid type, or length or empty string) included, skipped them.";
+        continue;
+      }
 
-          if (!newAdditive) throwError("Failed to create additives; Sorry!");
-          await newAdditive.setProduct(product.id);
+      try {
+        const newAdditive = await Additive.create({
+          text: text,
+        });
 
-          newAdditives.push(newAdditive);
-        } catch (err) {
-          console.error(err);
-          next(err);
-        }
+        if (!newAdditive) throwError("Failed to create additives; Sorry!");
+        await newAdditive.setProduct(product.id);
+
+        newAdditives.push(newAdditive);
+      } catch (err) {
+        console.error(err);
+        next(err);
       }
     }
 
     res.status(201).json({
       additives: newAdditives,
       message: "Additives sucessfully created additive",
+      warnings: warning,
     });
   } catch (err) {
     console.log(err);
