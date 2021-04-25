@@ -186,7 +186,7 @@ exports.addFile = async (req, res, next) => {
       fileName: file.filename,
     });
 
-    const fetchedFile = product.addFiles(newFile);
+    const fetchedFile = newFile.setProduct(product);
 
     if (!fetchedFile) throwError("Cannot add file for the product, weired.");
     const count = await product.countFiles();
