@@ -57,6 +57,10 @@ exports.addAllergrns = async (req, res, next) => {
 
     // Loop through the allergens and create them.
     for (const text of allergens) {
+      // validate for type, and length
+      if (typeof text !== "string" || text.length > 255)
+        throwError("Invalid allergen.", 422);
+
       if (text) {
         const newAllergen = await Allergen.create({
           text: text,
