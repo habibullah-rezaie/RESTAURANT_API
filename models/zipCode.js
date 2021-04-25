@@ -14,7 +14,7 @@ ZipCode.init(
       },
     },
     description: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
     },
   },
   { sequelize, timestamps: false }

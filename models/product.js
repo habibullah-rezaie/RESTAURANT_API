@@ -20,11 +20,12 @@ Product.init(
       allowNull: false,
     },
     title: {
-      type: STRING(64),
+      type: STRING,
       allowNull: false,
+      unique: true,
     },
     description: {
-      type: TEXT({ length: "tiny" }),
+      type: TEXT,
     },
     inPrice: {
       type: SMALLINT,

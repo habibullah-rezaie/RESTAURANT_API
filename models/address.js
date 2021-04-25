@@ -12,7 +12,7 @@ Address.init(
       allowNull: false,
     },
     detail: {
-      type: TEXT({ length: "medium" }),
+      type: TEXT,
       allowNull: false, // Detail is contained of Street, and home number so it is necessary
     },
   },
