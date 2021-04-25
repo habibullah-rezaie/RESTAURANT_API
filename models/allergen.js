@@ -18,7 +18,7 @@ Allergen.init(
   },
   {
     sequelize,
-    indexes: [{ unique: true, fields: ["id", "text"] }],
+    indexes: [{ unique: true, fields: ["ProductId", "text"] }],
     timestamps: false,
   }
 );
