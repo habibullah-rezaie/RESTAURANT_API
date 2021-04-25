@@ -16,7 +16,11 @@ Allergen.init(
       allowNull: false,
     },
   },
-  { sequelize, indexes: [{ unique: true, fields: ["id", "text"] }] }
+  {
+    sequelize,
+    indexes: [{ unique: true, fields: ["id", "text"] }],
+    timestamps: false,
+  }
 );
 
 module.exports = Allergen;

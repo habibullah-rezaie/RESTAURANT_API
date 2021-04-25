@@ -17,7 +17,7 @@ File.init(
       allowNull: false,
     },
   },
-  { sequelize: sequelize }
+  { sequelize: sequelize, timestamps: false },
 );
 
 module.exports = File;
