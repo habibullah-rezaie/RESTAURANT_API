@@ -28,15 +28,15 @@ OrderItem.init(
     },
     discount: {
       type: DOUBLE(5, 2),
-      allowNull: false,
+      allowNull: true,
     },
     outPrice: {
       type: DOUBLE(9, 2),
-      allowNull: false,
+      allowNull: true,
     },
     inPrice: {
       type: DOUBLE(9, 2),
-      allowNull: false,
+      allowNull: true,
     },
   },
   { sequelize, timestamps: false }
