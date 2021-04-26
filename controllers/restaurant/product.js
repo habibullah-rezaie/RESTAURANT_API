@@ -14,6 +14,11 @@ exports.getProducts = async (req, res, next) => {
 
   const category = req.productCategory;
   const { limit, page } = req.query;
+
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const products = await Product.findAndCountAll({
       where: category
@@ -21,8 +26,8 @@ exports.getProducts = async (req, res, next) => {
             ProductCategoryId: category.id,
           }
         : true,
-      limit: limit ? limit : 10,
-      offset: page ? (page - 1) * limit : page,
+      limit: LIMIT,
+      offset: PAGE,
     });
 
     res.status(200).json({
@@ -70,11 +75,15 @@ exports.getToppings = async (req, res, next) => {
   const product = req.product;
   const { limit, page } = req.query;
 
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const count = await product.countToppings();
     const toppings = await product.getToppings({
-      limit: limit ? limit : 10,
-      offset: page ? (page - 1) * limit : page,
+      limit: LIMIT,
+      offset: PAGE,
     });
 
     res.status(200).json({
@@ -98,13 +107,17 @@ exports.getAllergens = async (req, res, next) => {
   const product = req.product;
   const { limit, page } = req.query;
 
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const allergen = await Allergen.findAndCountAll({
       where: {
         ProductId: product.id,
       },
-      limit: limit ? limit : 10,
-      offset: page ? (page - 1) * limit : page,
+      limit: LIMIT,
+      offset: PAGE,
     });
 
     res.status(200).json({
@@ -128,13 +141,17 @@ exports.getAdditives = async (req, res, next) => {
   const product = req.product;
   const { limit, page } = req.query;
 
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const additives = await Additive.findAndCountAll({
       where: {
         ProductId: product.id,
       },
-      limit: limit ? limit : 10,
-      offset: page ? (page - 1) * limit : page,
+      limit: LIMIT,
+      offset: PAGE,
     });
 
     res.status(200).json({

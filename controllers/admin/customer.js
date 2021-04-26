@@ -1,4 +1,3 @@
-
 const { validationResult } = require("express-validator");
 
 const Customer = require("../../models/customer");
@@ -12,6 +11,10 @@ exports.getCustomers = async (req, res, next) => {
 
   const { firstName, lastName, phoneNumber, limit, page, order } = req.query;
 
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const whereClause = new Object();
     if (firstName) whereClause.firstName = firstName;
@@ -20,8 +23,8 @@ exports.getCustomers = async (req, res, next) => {
 
     const customers = await Customer.findAndCountAll({
       where: whereClause,
-      limit: limit ? +limit : 10,
-      offset: page ? (+page - 1) * +limit : 0,
+      limit: LIMIT,
+      offset: PAGE,
       order: [["createdAt", order]],
     });
 
@@ -47,4 +50,3 @@ exports.getCustomer = async (req, res, next) => {
     .status(200)
     .json({ customer: req.customer, message: "Successfully fetched user." });
 };
-

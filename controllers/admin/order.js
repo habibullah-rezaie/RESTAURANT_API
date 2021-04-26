@@ -24,6 +24,10 @@ exports.getOrders = async (req, res, next) => {
     isDone,
   } = req.query;
 
+  // Calculdate limit & page
+  const LIMIT = limit ? limit : 10;
+  const PAGE = page ? (page - 1) * LIMIT : page;
+
   try {
     const whereClause = {};
 
@@ -36,8 +40,9 @@ exports.getOrders = async (req, res, next) => {
       whereClause["$Customer.Address.ZipCode$"] = { [Op.eq]: req.zipCode.code };
 
     const orders = await Order.findAndCountAll({
-      offset: page ? (page - 1) * limit : 0,
-      limit: limit ? limit : 24,
+      offset: PAGE,
+      limit: LIMIT,
+
       order: [
         [orderBy, orderByDirection],
         ["createdAt", "DESC"],
