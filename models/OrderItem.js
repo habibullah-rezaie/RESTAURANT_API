@@ -1,4 +1,12 @@
-const { Model, UUID, UUIDV4, TEXT, SMALLINT, TINYINT } = require("sequelize");
+const {
+  Model,
+  UUID,
+  UUIDV4,
+  TEXT,
+  SMALLINT,
+  TINYINT,
+  DOUBLE,
+} = require("sequelize");
 const sequelize = require("./sequelize");
 
 class OrderItem extends Model {}
@@ -19,16 +27,16 @@ OrderItem.init(
       defaultValue: 1,
     },
     discount: {
-      type: TINYINT,
-      allowNull: false,
+      type: DOUBLE(5, 2),
+      allowNull: true,
     },
     outPrice: {
-      type: SMALLINT,
-      allowNull: false,
+      type: DOUBLE(9, 2),
+      allowNull: true,
     },
     inPrice: {
-      type: SMALLINT,
-      allowNull: false,
+      type: DOUBLE(9, 2),
+      allowNull: true,
     },
   },
   { sequelize, timestamps: false }
