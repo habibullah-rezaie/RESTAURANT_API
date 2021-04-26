@@ -6,6 +6,7 @@ const {
   TEXT,
   SMALLINT,
   TINYINT,
+  DOUBLE,
 } = require("sequelize");
 const sequelize = require("./sequelize");
 
@@ -28,15 +29,15 @@ Product.init(
       type: TEXT,
     },
     inPrice: {
-      type: SMALLINT,
+      type: DOUBLE(9, 2),
       allowNull: false,
     },
     outPrice: {
-      type: SMALLINT,
+      type: DOUBLE(9, 2),
       allowNull: false,
     },
     discount: {
-      type: TINYINT,
+      type: DOUBLE(5, 2),
       defaultValue: 0,
       allowNull: false,
     },
