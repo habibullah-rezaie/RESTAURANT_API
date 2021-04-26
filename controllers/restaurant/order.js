@@ -3,7 +3,6 @@ const Address = require("../../models/address");
 const Customer = require("../../models/customer");
 const Order = require("../../models/order");
 const OrderItem = require("../../models/OrderItem");
-const OrderItemTopping = require("../../models/orderItemTopping");
 
 const { sendValidatorError } = require("../../utils/error");
 
@@ -45,7 +44,13 @@ exports.createOrder = async (req, res, next) => {
     }
 
     products.forEach((prd) => {
-      prd.product.OrderItem = { qty: prd.qty, remark: prd.remark };
+      prd.product.OrderItem = {
+        qty: prd.qty,
+        remark: prd.remark,
+        inPrice: prd.product.inPrice,
+        outPrice: prd.product.outPrice,
+        discount: prd.product.discount,
+      };
     });
 
     await order.setProducts(products.map((prd) => prd.product));

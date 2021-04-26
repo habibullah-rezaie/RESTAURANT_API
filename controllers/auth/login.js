@@ -24,7 +24,7 @@ exports.login = async (req, res, next) => {
         },
       },
       process.env.JWT_ACCESS_TOKEN_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "24h" }
     );
 
     let refreshToken = jwt.sign(
