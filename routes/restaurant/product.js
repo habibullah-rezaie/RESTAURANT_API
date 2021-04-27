@@ -8,6 +8,7 @@ const {
   getFiles,
   getAdditives,
   getAllergens,
+  getCategories,
 } = require("../../controllers/restaurant/product");
 const Product = require("../../models/product");
 const ProductCategory = require("../../models/productCategory");
@@ -195,4 +196,24 @@ router.get(
   ],
   getAdditives
 );
+
 module.exports = router;
+
+// GET /products/categories => get  list of all categories
+router.get(
+  "/categories",
+  [
+    query("limit")
+      .optional()
+      .isInt()
+      .withMessage("Limit should be an integer.")
+      .toInt(),
+
+    query("page")
+      .optional()
+      .isInt()
+      .withMessage("Page should be an integer.")
+      .toInt(),
+  ],
+  getCategories
+);
