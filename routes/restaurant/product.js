@@ -15,60 +15,6 @@ const ProductCategory = require("../../models/productCategory");
 
 const router = express.Router();
 
-// GET /admin/products/ => GEt list of products
-router.get(
-  "/",
-  [
-    query("category")
-      .trim()
-      .custom(async (ctg, { req }) => {
-        if (ctg) {
-          console.log(ctg);
-          const fetchedCtg = await ProductCategory.findOne({
-            where: { name: ctg },
-          });
-          if (!fetchedCtg) throw new Error("Category does not exist.");
-          req.productCategory = fetchedCtg;
-          return true;
-        }
-      }),
-    query().custom((qr) => {
-      if (
-        qr.limit !== undefined &&
-        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
-      ) {
-        throw new Error("Limit should be a number");
-      }
-
-      if (
-        qr.page !== undefined &&
-        Number.isNaN((qr.page = Number.parseInt(qr.page)))
-      ) {
-        throw new Error("Page should be a number");
-      }
-      return true;
-    }),
-  ],
-  getProducts
-);
-
-// GET /admin/products/:id => GEt detail single product
-router.get(
-  "/:id",
-  [
-    param("id")
-      .trim()
-      .custom(async (id, { req }) => {
-        const product = await Product.findByPk(id, {
-          include: ["ProductCategory"],
-        });
-        if (!product) throw new Error("No product exist with given id");
-        req.product = product;
-      }),
-  ],
-  getProduct
-);
-
 // GET /admin/products/toppings/ => Get list of toppings of a product
 router.get(
   "/:productId/toppings",
@@ -216,4 +162,58 @@ router.get(
       .toInt(),
   ],
   getCategories
+);
+
+// GET /admin/products/:id => GEt detail single product
+router.get(
+  "/:id",
+  [
+    param("id")
+      .trim()
+      .custom(async (id, { req }) => {
+        const product = await Product.findByPk(id, {
+          include: ["ProductCategory"],
+        });
+        if (!product) throw new Error("No product exist with given id");
+        req.product = product;
+      }),
+  ],
+  getProduct
+);
+
+// GET /admin/products/ => GEt list of products
+router.get(
+  "/",
+  [
+    query("category")
+      .trim()
+      .custom(async (ctg, { req }) => {
+        if (ctg) {
+          console.log(ctg);
+          const fetchedCtg = await ProductCategory.findOne({
+            where: { name: ctg },
+          });
+          if (!fetchedCtg) throw new Error("Category does not exist.");
+          req.productCategory = fetchedCtg;
+          return true;
+        }
+      }),
+    query().custom((qr) => {
+      if (
+        qr.limit !== undefined &&
+        Number.isNaN((qr.limit = Number.parseInt(qr.limit)))
+      ) {
+        throw new Error("Limit should be a number");
+      }
+
+      if (
+        qr.page !== undefined &&
+        Number.isNaN((qr.page = Number.parseInt(qr.page)))
+      ) {
+        throw new Error("Page should be a number");
+      }
+      return true;
+    }),
+  ],
+  getProducts
 );
