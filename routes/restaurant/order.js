@@ -1,12 +1,13 @@
+const moment = require("moment");
 const express = require("express");
 const { body } = require("express-validator");
 const { Op } = require("sequelize");
+
 const { createOrder } = require("../../controllers/restaurant/order");
-const Address = require("../../models/address");
 const Customer = require("../../models/customer");
 const Product = require("../../models/product");
-const Topping = require("../../models/topping");
 const ZipCode = require("../../models/zipCode");
+const Timing = require("../../models/timing");
 
 const router = express.Router();
 
@@ -14,10 +15,32 @@ const router = express.Router();
 router.post(
   "/",
   [
-    body().custom((reqBody, {}) => {
+    body().custom(async (reqBody, {}) => {
+      const now = moment();
+      const today = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ][now.weekday()];
+
+      const timing = await Timing.findByPk(today);
+
+      const opening =
+        now.format("YYYY-MM-DD") + "T" + timing.opening + "+02:00";
+
+      const closing =
+        now.format("YYYY-MM-DD") + "T" + timing.closing + "+02:00";
+
+      if (!(now.utcOffset(120).isAfter(opening) && now.utcOffset(120).isBefore(closing))) {
+        throw new Error('Restaurant is closed.')
+      }
+
       const { firstName, lastName, phoneNumber, address, products } = reqBody;
       if (!address) throw new Error("No address given.");
-      console.log(firstName);
       if (!firstName || !lastName || !phoneNumber)
         throw new Error("Invalid phone number, first name, or last name.");
       if (!address.zipCode) throw new Error("No zip code was given.");
