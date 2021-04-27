@@ -1,7 +1,8 @@
 const { validationResult } = require("express-validator");
+
 const Additive = require("../../models/additive");
 const Allergen = require("../../models/allergen");
-
+const ProductCategory = require("../../models/productCategory");
 const Product = require("../../models/product");
 const { sendValidatorError } = require("../../utils/error");
 
@@ -186,3 +187,29 @@ exports.getFiles = async (req, res, next) => {
     next(err);
   }
 };
+
+// GET /products/categories
+const getCategories = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+
+  const LIMIT = req.query.limit > 0 ? req.query.limit : 24;
+  const OFFSET = req.query.page > 0 ? (req.query.page - 1) * LIMIT : 0;
+
+  try {
+    const categories = await ProductCategory.findAndCountAll({
+      limit: LIMIT,
+      offset: OFFSET,
+    });
+
+    res.status(200).json({
+      categories: categories.rows,
+      count: categories.count,
+      message: "Successfully fetched categories",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.getCategories = getCategories;
