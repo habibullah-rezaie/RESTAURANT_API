@@ -1,17 +1,17 @@
 const express = require("express");
-const { login } = require("../../controllers/auth/login");
+const { login } = require("../controllers/auth");
 const { body } = require("express-validator");
-const Admin = require("../../models/admin");
+const Admin = require("../models/admin");
 const { compare } = require("bcryptjs");
 const router = express.Router();
 
 // POST /login => login admink
 router.post(
-  "/",
+  "/login",
   [
     body("password")
       .trim()
-      .isLength({ min: 8, max: 64 })
+      .isLength({ min: 7, max: 64 })
       .withMessage("Invalid password or Email"),
     body("email")
       .trim()
@@ -26,7 +26,7 @@ router.post(
         const admin = await Admin.findOne({ where: { email } });
         if (!admin) {
           const err = new Error("Invalid email or password");
-          err.statusCode = 401;
+          err.statusCode = 400;
           throw err;
         }
 
@@ -34,7 +34,7 @@ router.post(
 
         if (!passwordCompareRes) {
           const err = new Error("Invalid email or password");
-          err.statusCode = 401;
+          err.statusCode = 400;
           throw err;
         }
 
