@@ -3,15 +3,22 @@
  * @param {[import("express-validator").ValidationError]} errors A req that contains
  * the errors throw by validator
  */
-exports.sendValidatorError = (errors, res) => {
+exports.sendValidatorError = (errors, res, next = undefined) => {
   let statusCode = 422;
-
+  let hasSpecialTypeError = false;
   // Find a different status code.
   const details = errors.array().map((err) => {
     statusCode = (err.statusCode && err.statusCode) || 422;
 
+    if (err.msg.specialType) {
+      hasSpecialTypeError = true;
+      return next(err.msg);
+    }
+
     return err.msg;
   });
+
+  if (hasSpecialTypeError) return;
 
   // Validation errors has occured
   if (!errors.isEmpty()) {
