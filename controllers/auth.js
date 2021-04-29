@@ -1,13 +1,13 @@
-const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const { generateAccessToken } = require("../../utils/auth");
 
-const Admin = require("../../models/admin");
-const RefreshToken = require("../../models/refreshToken");
-const { sendValidatorError, throwError } = require("../../utils/error");
+const RefreshToken = require("../models/refreshToken");
+const { generateAccessToken } = require("../utils/auth");
+const { sendValidatorError, throwError } = require("../utils/error");
 
-exports.login = async (req, res, next) => {
+const TOKEN_EXPIRATION_TIME = "24h";
+
+const login = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
@@ -16,7 +16,7 @@ exports.login = async (req, res, next) => {
   try {
     const { admin } = req;
 
-    const accessToken = jwt.sign(
+    const accessToken = generateAccessToken(
       {
         admin: {
           firstName: admin.firstName,
@@ -24,8 +24,7 @@ exports.login = async (req, res, next) => {
           email: admin.email,
         },
       },
-      process.env.JWT_ACCESS_TOKEN_SECRET,
-      { expiresIn: "24h" }
+      TOKEN_EXPIRATION_TIME
     );
 
     let refreshToken = jwt.sign(
@@ -68,7 +67,7 @@ const getToken = async (req, res, next) => {
       (err, data) => {
         if (err) throwError(err.message, 403);
 
-        const token = generateAccessToken(data);
+        const token = generateAccessToken(data, TOKEN_EXPIRATION_TIME);
 
         res.status(200).json({
           token,
