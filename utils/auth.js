@@ -29,3 +29,11 @@ exports.isAuthenticated = (req, res, next) => {
     }
   );
 };
+
+const generateAccessToken = (data, expiresIn) => {
+  return jwt.sign(data, process.env.JWT_ACCESS_TOKEN_SECRET, {
+    expiresIn
+  });
+};
+
+exports.generateAccessToken = generateAccessToken;
