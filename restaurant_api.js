@@ -16,7 +16,7 @@ const customerRoutes = require("./routes/admin/customer");
 const productRoutes = require("./routes/restaurant/product");
 const discountRoutes = require("./routes/admin/discount");
 const orderRoutes = require("./routes/admin/order");
-const adminLogin = require("./routes/auth/login");
+const adminAuth = require("./routes/auth");
 
 const timingClientRoutes = require("./routes/restaurant/timing");
 const zipCodeClientRoutes = require("./routes/restaurant/zip-code");
@@ -81,7 +81,7 @@ app.use("/zipCodes", zipCodeClientRoutes);
 app.use("/order", orderClientRoutes);
 
 // Use login routes
-app.use("/login", adminLogin);
+app.use("/auth", adminAuth);
 
 // Error handling route
 app.use((err, req, res, next) => {
