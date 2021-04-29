@@ -88,11 +88,14 @@ app.use((err, req, res, next) => {
   console.error(err);
 
   switch (err.specialType) {
+    case "AUTHENTICATION_FAILURE":
+      return res.status(401).json({
+        message: err.message,
+      });
     case "FILE_FILTER":
       return res.status(err.statusCode ? err.statusCode : 500).json({
         message: err.message,
       });
-
     default:
       // In case of unique constraint voilation
       if (err.name === "SequelizeUniqueConstraintError") {
