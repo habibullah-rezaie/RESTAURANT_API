@@ -29,7 +29,7 @@ ZipCode.hasMany(Address);
 
 // Product has many files
 Product.hasMany(File);
-File.belongsTo(Product)
+File.belongsTo(Product);
 
 // Product belongs to several orders
 Product.belongsToMany(Order, { through: OrderItem });
@@ -58,35 +58,7 @@ module.exports = async (cb) => {
   try {
     await database.sync({ force: false });
 
-    // const ctg = await ProductCategory.create({
-    //   name: "newFood",
-    //   description: "foodery",
-    // });
-
-    // const prod = await Product.create({
-    //   title: "first product",
-    //   description: "this is first product",
-    //   inPrice: 0,
-    //   outPrice: 1,
-    //   discount: 0,
-    // });
-
-    // await prod.setProductCategory(ctg);
-    // console.log(prod);
-
-    // const al1 = await Allergen.create({ text: "this first allergen" });
-    // const al1 = await Topping.create({
-    //   title: "this second Topping",
-    //   price: 12,
-    // });
-
-    // const [prod] = await Product.findAll();
-    // console.log(prod);
-    // await al1.setProduct(prod);
-
-
     await cb();
-
   } catch (error) {
     console.error(error);
   }
