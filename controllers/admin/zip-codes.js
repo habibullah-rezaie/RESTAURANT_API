@@ -27,7 +27,7 @@ exports.addZipCode = async (req, res, next) => {
 
     if (!zipCode) {
       const newError = new Error("Unable to Create zipCode");
-      newError.statusCode = 500;
+      newError.httpStatusCode = 500;
       throw newError;
     }
 

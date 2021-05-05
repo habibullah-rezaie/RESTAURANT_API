@@ -5,7 +5,7 @@ exports.getZipCodes = async (req, res, next) => {
     const zipCodes = await ZipCode.findAll();
     if (!zipCodes) {
       const error = new Error("Failed to fetch zip codes");
-      error.statusCode = 500;
+      error.httpStatusCode = 500;
       throw error;
     }
 

@@ -4,13 +4,14 @@
  * the errors throw by validator
  */
 exports.sendValidatorError = (errors, res, next = undefined) => {
-  let statusCode = 422;
+  let httpStatusCode = 422;
   let hasSpecialTypeError = false;
+
   // Find a different status code.
   const details = errors.array().map((err) => {
-    statusCode = (err.statusCode && err.statusCode) || 422;
+    httpStatusCode = (err.httpStatusCode && err.httpStatusCode) || 422;
 
-    if (err.msg.specialType) {
+    if ((err.msg.specialType || err.msg.httpStatusCode) && next) {
       hasSpecialTypeError = true;
       return next(err.msg);
     }
@@ -22,7 +23,7 @@ exports.sendValidatorError = (errors, res, next = undefined) => {
 
   // Validation errors has occured
   if (!errors.isEmpty()) {
-    return res.status(statusCode).json({
+    return res.status(httpStatusCode).json({
       message: "Validation error occured.",
       details,
     });
@@ -36,13 +37,13 @@ exports.sendValidatorError = (errors, res, next = undefined) => {
  * without this function
  *
  * @param {String} msg A message to include in error
- * @param {Number} statusCode A statusCode to include for later error response
+ * @param {Number} httpStatusCode A httpStatusCode to include for later error response
  * @param {Object} options other attribues to add to error
  */
-exports.throwError = (msg, statusCode, options = {}) => {
+exports.throwError = (msg, httpStatusCode, options = {}) => {
   const err = new Error("ERROR");
   err.msg = msg;
-  err.statusCode = statusCode;
+  err.httpStatusCode = httpStatusCode;
   Object.keys(options).forEach((key) => (err[key] = options[key]));
   throw err;
 };

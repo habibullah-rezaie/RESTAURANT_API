@@ -5,7 +5,7 @@ exports.getTimings = async (req, res, next) => {
     const timings = await Timing.findAll();
     if (!timings) {
       const error = new Error("Failed to fetch timings");
-      error.statusCode = 500;
+      error.httpStatusCode = 500;
       throw error;
     }
 
