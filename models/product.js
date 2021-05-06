@@ -4,9 +4,8 @@ const {
   UUIDV4,
   STRING,
   TEXT,
-  SMALLINT,
-  TINYINT,
   DOUBLE,
+  INTEGER,
 } = require("sequelize");
 const sequelize = require("./sequelize");
 
@@ -40,6 +39,10 @@ Product.init(
       type: DOUBLE(5, 2),
       defaultValue: 0,
       allowNull: false,
+    },
+    sells: {
+      type: INTEGER,
+      defaultValue: 0,
     },
   },
   { sequelize }

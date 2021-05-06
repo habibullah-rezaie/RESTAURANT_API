@@ -44,8 +44,10 @@ exports.getOrders = async (req, res, next) => {
       limit: LIMIT,
 
       order: [
-        [orderBy, orderByDirection],
-        ["createdAt", "DESC"],
+        [
+          orderBy ? orderBy : "createdAt",
+          orderByDirection ? orderByDirection : "DESC",
+        ],
       ],
       where: {
         createdAt: {

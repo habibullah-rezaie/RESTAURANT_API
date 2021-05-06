@@ -5,6 +5,7 @@ const Allergen = require("../../models/allergen");
 const ProductCategory = require("../../models/productCategory");
 const Product = require("../../models/product");
 const { sendValidatorError } = require("../../utils/error");
+const { Op } = require("sequelize");
 
 // GET / products/ => Get list of products
 exports.getProducts = async (req, res, next) => {
@@ -14,19 +15,39 @@ exports.getProducts = async (req, res, next) => {
   if (!errors.isEmpty()) return sendValidatorError(errors, res);
 
   const category = req.productCategory;
-  const { limit, page } = req.query;
+  const { limit, page, search, sortBy, sortDirection } = req.query;
 
   // Calculdate limit & page
   const LIMIT = limit ? limit : 10;
   const PAGE = page ? (page - 1) * LIMIT : page;
 
+  let whereClause = true;
+
+  if (category) whereClause = { ProductCategoryId: category.id };
+
+  if (search)
+    whereClause = {
+      ...whereClause,
+      [Op.or]: [
+        {
+          title: {
+            [Op.and]: search.split(" ").map((str) => ({ [Op.substring]: str })),
+          },
+        },
+        {
+          description: {
+            [Op.and]: search.split(" ").map((str) => ({ [Op.substring]: str })),
+          },
+        },
+      ],
+    };
+
   try {
     const products = await Product.findAndCountAll({
-      where: category
-        ? {
-            ProductCategoryId: category.id,
-          }
-        : true,
+      where: whereClause,
+      order: [
+        [sortBy ? sortBy : "createdAt", sortDirection ? sortDirection : "DESC"],
+      ],
       limit: LIMIT,
       offset: PAGE,
     });

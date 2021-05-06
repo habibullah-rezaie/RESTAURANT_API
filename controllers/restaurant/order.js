@@ -10,7 +10,7 @@ exports.createOrder = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res, next);
 
   const products = req.products;
 
@@ -43,6 +43,7 @@ exports.createOrder = async (req, res, next) => {
       await order.setCustomer(req.customer);
     }
 
+    let total = 0;
     products.forEach((prd) => {
       prd.product.OrderItem = {
         qty: prd.qty,
@@ -51,7 +52,15 @@ exports.createOrder = async (req, res, next) => {
         outPrice: prd.product.outPrice,
         discount: prd.product.discount,
       };
+
+      total += prd.qty * prd.product.outPrice;
+
+      prd.product.sells += prd.product.OrderItem.qty;
+      prd.product.save();
     });
+
+    order.total = total;
+    order.save();
 
     await order.setProducts(products.map((prd) => prd.product));
 
@@ -64,10 +73,7 @@ exports.createOrder = async (req, res, next) => {
       });
 
       if (req.toppings[prd.product.id]) {
-        const result = await orderItem.setToppings(
-          req.toppings[prd.product.id]
-        );
-        console.log(result);
+        orderItem.setToppings(req.toppings[prd.product.id]);
       }
     }
 

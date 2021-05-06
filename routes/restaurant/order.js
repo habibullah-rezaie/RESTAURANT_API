@@ -8,6 +8,7 @@ const Customer = require("../../models/customer");
 const Product = require("../../models/product");
 const ZipCode = require("../../models/zipCode");
 const Timing = require("../../models/timing");
+const { throwError } = require("../../utils/error");
 
 const router = express.Router();
 
@@ -29,14 +30,24 @@ router.post(
 
       const timing = await Timing.findByPk(today);
 
+      if (!timing)
+        throw { message: "Restaurant is closed today.", httpStatusCode: 400 };
       const opening =
         now.format("YYYY-MM-DD") + "T" + timing.opening + "+02:00";
 
       const closing =
         now.format("YYYY-MM-DD") + "T" + timing.closing + "+02:00";
 
-      if (!(now.utcOffset(120).isAfter(opening) && now.utcOffset(120).isBefore(closing))) {
-        throw new Error('Restaurant is closed.')
+      if (
+        !(
+          now.utcOffset(120).isAfter(opening) &&
+          now.utcOffset(120).isBefore(closing)
+        )
+      ) {
+        throw {
+          message: "Restaurant is closed at the moment.",
+          httpStatusCode: 400,
+        };
       }
 
       const { firstName, lastName, phoneNumber, address, products } = reqBody;

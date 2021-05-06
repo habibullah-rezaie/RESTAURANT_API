@@ -11,7 +11,7 @@ const login = async (req, res, next) => {
   // validation results
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) return sendValidatorError(errors, res);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res, next);
 
   try {
     const { admin } = req;
@@ -80,7 +80,25 @@ const getToken = async (req, res, next) => {
   }
 };
 
+const logout = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res, next);
+
+  const { refreshToken } = req;
+  try {
+    await refreshToken.destroy();
+
+    res.status(200).json({
+      message: "Succeessfully logged out.",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getToken,
   login,
+  logout,
 };

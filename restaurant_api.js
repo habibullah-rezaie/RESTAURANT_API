@@ -1,5 +1,6 @@
 const { json } = require("express");
 const express = require("express");
+const path = require("path");
 require("dotenv").config();
 
 const { hash } = require("bcryptjs");
@@ -45,6 +46,8 @@ app.use((req, res, next) => {
 // parse json requests
 app.use(json());
 
+app.use("/files", express.static(path.join(__dirname, "files")));
+
 //used for product addition
 app.use("/admin/products", addproductRoutes);
 
@@ -83,31 +86,50 @@ app.use("/order", orderClientRoutes);
 // Use login routes
 app.use("/auth", adminAuth);
 
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+// });
+
 // Error handling route
 app.use((err, req, res, next) => {
   console.error(err);
 
-  switch (err.specialType) {
-    case "AUTHENTICATION_FAILURE":
-      return res.status(401).json({
-        message: err.message,
-      });
-    case "FILE_FILTER":
-      return res.status(err.statusCode ? err.statusCode : 500).json({
-        message: err.message,
-      });
-    default:
-      // In case of unique constraint voilation
-      if (err.name === "SequelizeUniqueConstraintError") {
-        return res.status(422).json({ message: "Data Already exists." });
-      }
-
-      res.status(err.statusCode ? err.statusCode : 500).json({
-        message: err.msg
-          ? err.msg
-          : `Something went wrong. Sorry! we're tring to fix it.`,
-      });
+  // In case of unique constraint voilation
+  if (err.name === "SequelizeUniqueConstraintError") {
+    return res.status(422).json({ message: "Data Already exists." });
   }
+
+  // Cases that require different error handling
+  // They have a occured in special condition
+  if (err.specialType) {
+    switch (err.specialType) {
+      case "VALIDATION":
+        return res.status(err.httpStatusCode ? err.httpStatusCode : 500).json({
+          message: err.message,
+          details: err.details,
+        });
+    }
+  }
+
+  // Cases where errors require different response codes than
+  // 422
+  if (err.httpStatusCode) {
+    let message = "NO MESSAGE";
+
+    if (err.msg) {
+      message = err.msg;
+    } else if (err.message) {
+      message = err.message;
+    }
+
+    return res.status(err.httpStatusCode).json({
+      message,
+    });
+  }
+
+  res.status(500).json({
+    message: `Something went wrong. Sorry! we're tring to fix it.`,
+  });
 });
 
 // Synchronize database and then make server listen

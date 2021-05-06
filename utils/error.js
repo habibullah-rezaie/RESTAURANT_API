@@ -41,7 +41,7 @@ exports.sendValidatorError = (errors, res, next = undefined) => {
  * @param {Object} options other attribues to add to error
  */
 exports.throwError = (msg, httpStatusCode, options = {}) => {
-  const err = new Error("ERROR");
+  const err = new Error('ERROR');
   err.msg = msg;
   err.httpStatusCode = httpStatusCode;
   Object.keys(options).forEach((key) => (err[key] = options[key]));

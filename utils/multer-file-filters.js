@@ -11,9 +11,9 @@ exports.addFileMulterFilter = function Filter(req, file, cb) {
   // reached
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const err = new Error(errors.array().map((e) => e.msg));
-    err.specialType = "FILE_FILTER";
-    err.statusCode = 421;
+    const err = new Error("Validation error occured");
+    err.details = errors.array().map((e) => e.msg);
+    err.specialType = "VALIDATION";
     return cb(err, false);
   }
 
@@ -28,9 +28,10 @@ exports.addFileMulterFilter = function Filter(req, file, cb) {
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    const err = new Error("Error: Images & videos Only!");
-    err.specialType = "FILE_FILTER";
-    err.statusCode = 421;
+    const err = new Error(
+      "Error: Supported media types: JPEG, JPG, PNG, GIF, MP4"
+    );
+    err.httpStatusCode = 415;
     cb(err, false);
   }
 };

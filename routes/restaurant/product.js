@@ -198,6 +198,22 @@ router.get(
           return true;
         }
       }),
+    query("search")
+      .optional()
+      .isLength({ max: 255 })
+      .withMessage("To long search text."),
+    query("sortBy")
+      .optional()
+      .trim()
+      .isIn(["sells", "createdAt", "outPrice", "discount"])
+      .withMessage(
+        `"sortBy" can only be "sells", "createdAt", "outPrice", or "discount"`
+      ),
+    query("sortDirection")
+      .optional()
+      .trim()
+      .isIn(["ASC", "DESC"])
+      .withMessage('sortDirection should be either "ASC" or "DESC".'),
     query().custom((qr) => {
       if (
         qr.limit !== undefined &&

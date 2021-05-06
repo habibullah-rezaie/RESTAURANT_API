@@ -7,7 +7,6 @@ const {
 } = require("../../controllers/admin/timing");
 const Timing = require("../../models/timing");
 const { isAuthenticated } = require("../../utils/auth");
-
 const router = express.Router();
 
 // POST /admin/timings/ => add a timing
@@ -37,13 +36,13 @@ router.post(
     body("opening")
       .trim()
       .matches(
-        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[1-9]):([1-5][0-9]|[0]?[1-9])$/
+        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[0-9]):([1-5][0-9]|[0]?[0-9])$/
       )
       .withMessage("Invalid opening time."),
     body("closing")
       .trim()
       .matches(
-        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[1-9]):([1-5][0-9]|[0]?[1-9])$/
+        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[0-9]):([1-5][0-9]|[0]?[0-9])$/
       )
       .withMessage("Invalid closing time.")
       .custom((closing, { req }) => {
@@ -105,13 +104,13 @@ router.put(
     body("opening")
       .trim()
       .matches(
-        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[1-9]):([1-5][0-9]|[0]?[1-9])$/
+        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[0-9]):([1-5][0-9]|[0]?[0-9])$/
       )
       .withMessage("Invalid opening time."),
     body("closing")
       .trim()
       .matches(
-        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[1-9]):([1-5][0-9]|[0]?[1-9])$/
+        /^([2][0-3]|[01]?[0-9]):([1-5][0-9]|[0]?[0-9]):([1-5][0-9]|[0]?[0-9])$/
       )
       .withMessage("Invalid closing time.")
       .custom((closing, { req }) => {
@@ -127,6 +126,7 @@ router.put(
         return true;
       })
       .withMessage(
+        
         "Closing time should not be less than opening time, and should at least differ 20 minutes."
       ),
   ],
@@ -169,4 +169,3 @@ router.delete(
 );
 
 module.exports = router;
-
