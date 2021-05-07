@@ -19,6 +19,10 @@ router.get(
   "/",
   isAuthenticated,
   [
+    query().custom((reqBody) => {
+      console.log(reqBody);
+      return true;
+    }),
     query("page")
       .optional()
       .trim()
@@ -34,8 +38,8 @@ router.get(
     query("isDone")
       .optional()
       .trim()
-      .isIn(["true", "false"])
-      .withMessage('"isDone" should either be true or false'),
+      .isIn([0, 1])
+      .withMessage('"isDone" should either be 1 or 0'),
     query("zipCode")
       .optional()
       .trim()
@@ -57,7 +61,11 @@ router.get(
     query("phoneNumber")
       .optional()
       .trim()
-      .isMobilePhone("any") // TODO: Change local
+      .customSanitizer((phoneNumber) => {
+        if (/^490?[1|3]/.test(phoneNumber)) phoneNumber = "+" + phoneNumber;
+        return phoneNumber;
+      })
+      .isMobilePhone("de-DE")
       .withMessage("Invalid phone number."),
     query("startDate")
       .optional()

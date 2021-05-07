@@ -3,9 +3,10 @@ const { validationResult } = require("express-validator");
 
 const Order = require("../../models/order");
 const { sendValidatorError } = require("../../utils/error");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const Customer = require("../../models/customer");
 const Address = require("../../models/address");
+const File = require("../../models/file")
 
 // handle GET /admin/orders/
 exports.getOrders = async (req, res, next) => {
@@ -78,7 +79,34 @@ exports.getOrders = async (req, res, next) => {
 };
 
 // handle GET /admin/orders/:id
-exports.getSingleOrder = async (req, res, next) => {};
+exports.getSingleOrder = async (req, res, next) => {
+  // validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return sendValidatorError(errors, res, next);
+
+  const { order } = req;
+
+  try {
+    const products = await order.getProducts({
+      attributes: ["id", "title", "description"],
+      include: [{
+        model: File,
+      }]
+    });
+
+    for (const prd of products) {
+      prd.dataValues.toppings = await prd.OrderItem.getToppings({through: undefined, attributes: ["id", "title", "price"]})
+    }
+
+    res.status(200).json({
+      order,
+      products,
+      message: "Successfully fetched order.",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // handle PATCH /admin/orders/:id
 exports.changeOrderSentStatus = async (req, res, next) => {
