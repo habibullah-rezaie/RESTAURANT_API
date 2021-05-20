@@ -5,7 +5,7 @@ const RefreshToken = require("../models/refreshToken");
 const { generateAccessToken } = require("../utils/auth");
 const { sendValidatorError, throwError } = require("../utils/error");
 
-const TOKEN_EXPIRATION_TIME = "24h";
+const TOKEN_EXPIRATION_TIME = "15m";
 
 const login = async (req, res, next) => {
   // validation results
@@ -35,7 +35,10 @@ const login = async (req, res, next) => {
           email: admin.email,
         },
       },
-      process.env.JWT_REFRESH_TOKEN_SECRET
+      process.env.JWT_REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: Date.now() + 8640000,
+      }
     );
 
     refreshToken = await RefreshToken.create({ token: refreshToken });
@@ -67,7 +70,7 @@ const getToken = async (req, res, next) => {
       (err, data) => {
         if (err) throwError(err.message, 403);
 
-        const token = generateAccessToken(data, TOKEN_EXPIRATION_TIME);
+        const token = generateAccessToken({admin: data.admin}, TOKEN_EXPIRATION_TIME);
 
         res.status(200).json({
           token,
