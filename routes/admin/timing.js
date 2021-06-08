@@ -58,7 +58,7 @@ router.post(
         return true;
       })
       .withMessage(
-        "Closing time should not be less than opening time, and should at least differ 20 minutes."
+        "Closing time should be at least 20 minutes after opening time."
       ),
   ],
   addTiming
