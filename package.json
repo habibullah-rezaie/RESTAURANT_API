@@ -4,8 +4,29 @@
   "description": "This is the api of the restaurant project of samir`s brother",
   "main": "restaurant_api.js",
   "scripts": {
+    "start": "nodemon -i files restuarant_api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Habibullah Rezaie, Nooruddin Rahmani",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.10.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
+    "multer": "^1.4.2",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/habibullah-rezaie/RESTAURANT_API.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/habibullah-rezaie/RESTAURANT_API/issues"
+  },
+  "homepage": "https://github.com/habibullah-rezaie/RESTAURANT_API#readme"
 }
